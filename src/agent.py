@@ -57,8 +57,9 @@ class SentinelAgent:
         M = config.MODEL_DIR
         self.artifacts["pipeline"] = joblib.load(
             os.path.join(M, "preprocess_pipeline.joblib"))
-        sup = json.load(open(os.path.join(config.REPORT_DIR,
-                                          "supervised_results.json")))
+        with open(os.path.join(config.REPORT_DIR,
+                               "supervised_results.json")) as fh:
+            sup = json.load(fh)
         best = sup["best_model"]
         self.artifacts["flow_model"] = joblib.load(
             os.path.join(M, f"sup_{best}.joblib"))

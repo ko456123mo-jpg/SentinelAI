@@ -22,8 +22,9 @@ class TestTrainedPipeline(unittest.TestCase):
 
     def test_supervised_accuracy_above_threshold(self):
         import json
-        res = json.load(open(os.path.join(
-            config.REPORT_DIR, "supervised_results.json")))
+        with open(os.path.join(config.REPORT_DIR,
+                               "supervised_results.json")) as fh:
+            res = json.load(fh)
         best = res["metrics_per_model"][res["best_model"]]
         self.assertGreater(best["accuracy"], 0.90)
         self.assertGreater(best["f1_macro"], 0.85)
