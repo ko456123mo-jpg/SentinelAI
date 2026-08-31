@@ -5,6 +5,7 @@ numpy>=1.26
 pandas>=2.0
 scipy>=1.11
 scikit-learn>=1.4
+scikit-image>=0.22              # HOG features (computer-vision baseline)
 matplotlib>=3.8
 seaborn>=0.13
 tensorflow-cpu>=2.16        # deep learning (MLP) + CNN (computer vision)

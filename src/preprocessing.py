@@ -135,7 +135,12 @@ def eda_figures(raw: pd.DataFrame):
     for ax, col, scale in zip(axes, ["syn_rate", "avg_pkt_size"],
                               [False, True]):
         groups = [raw.loc[raw.label == c, col] for c in config.FLOW_CLASSES]
-        ax.boxplot(groups, labels=config.FLOW_CLASSES, showfliers=False)
+        try:      # matplotlib >= 3.9
+            ax.boxplot(groups, tick_labels=config.FLOW_CLASSES,
+                       showfliers=False)
+        except TypeError:   # older matplotlib
+            ax.boxplot(groups, labels=config.FLOW_CLASSES,
+                       showfliers=False)
         ax.set_title(f"{col} by class")
         if scale:
             ax.set_yscale("log")
