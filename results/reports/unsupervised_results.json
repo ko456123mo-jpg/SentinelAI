@@ -1,0 +1,43 @@
+{
+  "kmeans": {
+    "chosen_k": 4,
+    "ARI": 0.4627558418749302,
+    "NMI": 0.6604867704660634,
+    "purity": 0.7666333666333667,
+    "silhouette": 0.4817811316367162
+  },
+  "dbscan": {
+    "clusters_found": 2,
+    "noise_ratio": 0.0,
+    "eps": 1.2,
+    "min_samples": 10,
+    "note": "run on a 3-D PCA subsample (density estimation in 12-D is expensive)"
+  },
+  "hierarchical": {
+    "method": "Ward linkage, AgglomerativeClustering, 8-D PCA subsample (2,500 flows)",
+    "n_clusters": 4,
+    "ARI": 0.4735462043923272,
+    "NMI": 0.6651132420025168,
+    "dendrogram": "results/figures/unsup_dendrogram.png"
+  },
+  "isolation_forest": {
+    "precision": 0.9478357380688124,
+    "recall": 0.6137261947538627,
+    "f1": 0.7450381679389313,
+    "benign_false_alarm_rate": 0.0423042304230423,
+    "threshold": 0.011107082833552103,
+    "training": "benign flows only (one-class)",
+    "per_class_detection": {
+      "Benign": 0.0423042304230423,
+      "Botnet": 0.0,
+      "BruteForce": 0.0,
+      "DDoS": 1.0,
+      "PortScan": 0.9323607427055703
+    }
+  },
+  "supervised_vs_unsupervised": {
+    "supervised": "Learns a mapping features->label from labelled examples; answers 'WHICH known attack is this?'. Needs labels, very accurate for seen classes.",
+    "unsupervised": "Learns the structure of the data without labels; answers 'does this look unusual / which flows group together?'. Can flag novel (zero-day) behaviour but cannot name the attack family.",
+    "complementarity": "SentinelAgent uses BOTH: the classifier names the threat, the anomaly detector gives a second, label-free opinion."
+  }
+}

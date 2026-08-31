@@ -1,0 +1,636 @@
+{
+  "total_runtime_sec": 7.2,
+  "preprocess": {
+    "rows_raw": 25200,
+    "justifications": {
+      "duplicates_removed": "Duplicated flow records (double export) would bias the trained models and inflate accuracy.",
+      "missing_imputed": "Median imputation for byte_std / flow_iat_mean - median is robust to the heavy right tail.",
+      "one_hot_encoding": "'protocol' is nominal (no order) -> one-hot avoids inventing a fake ordinal relationship.",
+      "log1p_transform": "Byte/packet counts are right-skewed; log1p compresses extreme values toward normality.",
+      "standard_scaling": "KNN, SVM and MLP need features on the same scale; fitted on train only (no leakage).",
+      "feature_selection": "Mutual-information SelectKBest keeps the 12 most informative features (less noise, faster SVM).",
+      "stratified_split": "80/20 stratified split preserves the class imbalance in both train and test sets."
+    },
+    "duplicates_removed": 178,
+    "negative_values_clipped": 75,
+    "missing_before": {
+      "byte_std": 378,
+      "flow_iat_mean": 378
+    },
+    "missing_after": 0,
+    "medians": {
+      "duration": 1.8977665720221024,
+      "src_port": 46030.0,
+      "dst_port": 443.0,
+      "src_bytes": 122.86625753360079,
+      "dst_bytes": 358.46458787363315,
+      "src_pkts": 25.0,
+      "dst_pkts": 10.0,
+      "syn_rate": 0.40438232124378837,
+      "ack_rate": 0.5399067690708151,
+      "psh_rate": 0.1779711051439912,
+      "avg_pkt_size": 188.52241277486593,
+      "byte_std": 43.430085815128535,
+      "flow_iat_mean": 56.952356509658415,
+      "active_duration": 1.2185385488384388,
+      "is_land": 0.0
+    },
+    "label_mapping": {
+      "Benign": 0,
+      "Botnet": 1,
+      "BruteForce": 2,
+      "DDoS": 3,
+      "PortScan": 4
+    },
+    "log1p_columns": [
+      "src_bytes",
+      "dst_bytes",
+      "byte_std",
+      "flow_iat_mean",
+      "duration",
+      "active_duration"
+    ],
+    "features_kept": [
+      "duration",
+      "dst_port",
+      "src_bytes",
+      "dst_bytes",
+      "src_pkts",
+      "dst_pkts",
+      "syn_rate",
+      "ack_rate",
+      "avg_pkt_size",
+      "byte_std",
+      "flow_iat_mean",
+      "active_duration"
+    ],
+    "features_dropped": [
+      "src_port",
+      "psh_rate",
+      "is_land",
+      "proto_TCP",
+      "proto_UDP"
+    ],
+    "rows_clean": 25022,
+    "features_after_encoding": 17,
+    "features_kept_count": 12,
+    "train_rows": 20017,
+    "test_rows": 5005,
+    "train_class_distribution": {
+      "Benign": 8888,
+      "Botnet": 1641,
+      "BruteForce": 2453,
+      "DDoS": 4021,
+      "PortScan": 3014
+    },
+    "test_class_distribution": {
+      "Benign": 2222,
+      "Botnet": 410,
+      "BruteForce": 614,
+      "DDoS": 1005,
+      "PortScan": 754
+    }
+  },
+  "supervised": {
+    "metrics_per_model": {
+      "LogisticRegression": {
+        "accuracy": 0.9334665334665335,
+        "precision_macro": 0.9194736753219936,
+        "recall_macro": 0.9299536165233537,
+        "f1_macro": 0.9241506572281937,
+        "f1_weighted": 0.9332613719928484
+      },
+      "KNN": {
+        "accuracy": 0.971028971028971,
+        "precision_macro": 0.9505315968410839,
+        "recall_macro": 0.9846092295067639,
+        "f1_macro": 0.9660292989278287,
+        "f1_weighted": 0.971396218558882
+      },
+      "DecisionTree": {
+        "accuracy": 0.9918081918081918,
+        "precision_macro": 0.9921063610363392,
+        "recall_macro": 0.9901368971563544,
+        "f1_macro": 0.9911123390860663,
+        "f1_weighted": 0.9918006983690991
+      },
+      "RandomForest": {
+        "accuracy": 0.9976023976023976,
+        "precision_macro": 0.9967166182049423,
+        "recall_macro": 0.9973434766214367,
+        "f1_macro": 0.9970232431581252,
+        "f1_weighted": 0.9976033484885569
+      },
+      "SVM": {
+        "accuracy": 0.9746253746253746,
+        "precision_macro": 0.95794478394377,
+        "recall_macro": 0.9815310900476465,
+        "f1_macro": 0.9690562551159367,
+        "f1_weighted": 0.9748494134097045
+      },
+      "NaiveBayes": {
+        "accuracy": 0.9196803196803197,
+        "precision_macro": 0.882939172962774,
+        "recall_macro": 0.9605603627018777,
+        "f1_macro": 0.9131324300503867,
+        "f1_weighted": 0.9206597878058431
+      }
+    },
+    "best_model": "RandomForest",
+    "classification_report_best": {
+      "Benign": {
+        "precision": 0.9972997299729973,
+        "recall": 0.9972997299729973,
+        "f1-score": 0.9972997299729973,
+        "support": 2222.0
+      },
+      "Botnet": {
+        "precision": 0.9879227053140096,
+        "recall": 0.9975609756097561,
+        "f1-score": 0.9927184466019418,
+        "support": 410.0
+      },
+      "BruteForce": {
+        "precision": 0.9983606557377049,
+        "recall": 0.99185667752443,
+        "f1-score": 0.9950980392156863,
+        "support": 614.0
+      },
+      "DDoS": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1005.0
+      },
+      "PortScan": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 754.0
+      },
+      "accuracy": 0.9976023976023976,
+      "macro avg": {
+        "precision": 0.9967166182049423,
+        "recall": 0.9973434766214367,
+        "f1-score": 0.9970232431581252,
+        "support": 5005.0
+      },
+      "weighted avg": {
+        "precision": 0.9976107396207182,
+        "recall": 0.9976023976023976,
+        "f1-score": 0.9976033484885569,
+        "support": 5005.0
+      }
+    },
+    "fp_fn_analysis": [
+      {
+        "class": "Benign",
+        "FP": 6,
+        "FN": 6,
+        "FP_rate": 0.0027,
+        "FN_rate": 0.0027
+      },
+      {
+        "class": "Botnet",
+        "FP": 5,
+        "FN": 1,
+        "FP_rate": 0.0121,
+        "FN_rate": 0.0024
+      },
+      {
+        "class": "BruteForce",
+        "FP": 1,
+        "FN": 5,
+        "FP_rate": 0.0016,
+        "FN_rate": 0.0081
+      },
+      {
+        "class": "DDoS",
+        "FP": 0,
+        "FN": 0,
+        "FP_rate": 0.0,
+        "FN_rate": 0.0
+      },
+      {
+        "class": "PortScan",
+        "FP": 0,
+        "FN": 0,
+        "FP_rate": 0.0,
+        "FN_rate": 0.0
+      }
+    ],
+    "cross_validation": {
+      "LogisticRegression": {
+        "accuracy_mean": 0.9290602103367529,
+        "accuracy_std": 0.001354373606747666,
+        "f1_macro_mean": 0.9200996651111906,
+        "f1_macro_std": 0.0019083730128629903,
+        "folds": 5
+      },
+      "KNN": {
+        "accuracy_mean": 0.9651794246223424,
+        "accuracy_std": 0.0026345758011922706,
+        "f1_macro_mean": 0.9608743240725637,
+        "f1_macro_std": 0.0032849472879147275,
+        "folds": 5
+      },
+      "DecisionTree": {
+        "accuracy_mean": 0.989958567537883,
+        "accuracy_std": 0.0009913878962362244,
+        "f1_macro_mean": 0.9885107658510546,
+        "f1_macro_std": 0.0010933408202609205,
+        "folds": 5
+      },
+      "RandomForest": {
+        "accuracy_mean": 0.9969026227332499,
+        "accuracy_std": 0.000681359716651898,
+        "f1_macro_mean": 0.996109401221496,
+        "f1_macro_std": 0.0009427382653401815,
+        "folds": 5
+      },
+      "SVM": {
+        "accuracy_mean": 0.9712,
+        "accuracy_std": 0.002694438717061509,
+        "f1_macro_mean": 0.9669422555828646,
+        "f1_macro_std": 0.0026575750410735583,
+        "folds": 5
+      },
+      "NaiveBayes": {
+        "accuracy_mean": 0.9146225370931841,
+        "accuracy_std": 0.003816857029434659,
+        "f1_macro_mean": 0.9091355875462502,
+        "f1_macro_std": 0.0037490662259654743,
+        "folds": 5
+      }
+    },
+    "grid_search": {
+      "best_params": {
+        "max_depth": 22,
+        "n_estimators": 200
+      },
+      "best_cv_f1_macro": 0.9959200927595743,
+      "grid": {
+        "n_estimators": [
+          100,
+          200,
+          400
+        ],
+        "max_depth": [
+          null,
+          14,
+          22
+        ]
+      }
+    },
+    "imbalance_handling": {
+      "default": {
+        "f1_macro": 0.9970232431581252,
+        "recall_Botnet": 0.9975609756097561,
+        "recall_BruteForce": 0.99185667752443
+      },
+      "balanced": {
+        "f1_macro": 0.9973894619974573,
+        "recall_Botnet": 1.0,
+        "recall_BruteForce": 0.990228013029316
+      },
+      "note": "class_weight='balanced' re-weights minority classes in the loss; effect on this dataset is small because the overlap (not the imbalance) drives the remaining errors."
+    },
+    "svm_fit_subsample": "SVC fitted on a capped sample of 10000 rows (O(n^2) cost), evaluated on the full test set",
+    "discussion": {
+      "false_positives": "A FP flags legitimate traffic as an attack -> analyst time wasted and possible service disruption.",
+      "false_negatives": "A FN lets real attack traffic pass unnoticed -> the most expensive error in a SOC, hence recall matters most."
+    }
+  },
+  "unsupervised": {
+    "kmeans": {
+      "chosen_k": 4,
+      "ARI": 0.4627558418749302,
+      "NMI": 0.6604867704660634,
+      "purity": 0.7666333666333667,
+      "silhouette": 0.4817811316367162
+    },
+    "dbscan": {
+      "clusters_found": 2,
+      "noise_ratio": 0.0,
+      "eps": 1.2,
+      "min_samples": 10,
+      "note": "run on a 3-D PCA subsample (density estimation in 12-D is expensive)"
+    },
+    "hierarchical": {
+      "method": "Ward linkage, AgglomerativeClustering, 8-D PCA subsample (2,500 flows)",
+      "n_clusters": 4,
+      "ARI": 0.4735462043923272,
+      "NMI": 0.6651132420025168,
+      "dendrogram": "results/figures/unsup_dendrogram.png"
+    },
+    "isolation_forest": {
+      "precision": 0.9478357380688124,
+      "recall": 0.6137261947538627,
+      "f1": 0.7450381679389313,
+      "benign_false_alarm_rate": 0.0423042304230423,
+      "threshold": 0.011107082833552103,
+      "training": "benign flows only (one-class)",
+      "per_class_detection": {
+        "Benign": 0.0423042304230423,
+        "Botnet": 0.0,
+        "BruteForce": 0.0,
+        "DDoS": 1.0,
+        "PortScan": 0.9323607427055703
+      }
+    },
+    "supervised_vs_unsupervised": {
+      "supervised": "Learns a mapping features->label from labelled examples; answers 'WHICH known attack is this?'. Needs labels, very accurate for seen classes.",
+      "unsupervised": "Learns the structure of the data without labels; answers 'does this look unusual / which flows group together?'. Can flag novel (zero-day) behaviour but cannot name the attack family.",
+      "complementarity": "SentinelAgent uses BOTH: the classifier names the threat, the anomaly detector gives a second, label-free opinion."
+    }
+  },
+  "dl": {
+    "architecture": "12 -> Dense64(ReLU) -> Dropout.3 -> Dense32(ReLU) -> Dropout.2 -> Dense5(Softmax)",
+    "optimizer": "Adam lr=1e-3, sparse categorical cross-entropy, early stopping (patience 8)",
+    "epochs_trained": 60,
+    "params": 3077,
+    "metrics": {
+      "accuracy": 0.9854145854145854,
+      "precision_macro": 0.9763763533085944,
+      "recall_macro": 0.9873833787202798,
+      "f1_macro": 0.9816834737152307,
+      "f1_weighted": 0.9855059995621345
+    },
+    "classification_report": {
+      "Benign": {
+        "precision": 0.9922267946959304,
+        "recall": 0.9765976597659766,
+        "f1-score": 0.9843501927874801,
+        "support": 2222.0
+      },
+      "Botnet": {
+        "precision": 0.9197247706422018,
+        "recall": 0.9780487804878049,
+        "f1-score": 0.9479905437352246,
+        "support": 410.0
+      },
+      "BruteForce": {
+        "precision": 0.987012987012987,
+        "recall": 0.990228013029316,
+        "f1-score": 0.9886178861788618,
+        "support": 614.0
+      },
+      "DDoS": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1005.0
+      },
+      "PortScan": {
+        "precision": 0.9829172141918529,
+        "recall": 0.9920424403183024,
+        "f1-score": 0.9874587458745875,
+        "support": 754.0
+      },
+      "accuracy": 0.9854145854145854,
+      "macro avg": {
+        "precision": 0.9763763533085944,
+        "recall": 0.9873833787202798,
+        "f1-score": 0.9816834737152307,
+        "support": 5005.0
+      },
+      "weighted avg": {
+        "precision": 0.9858063231377205,
+        "recall": 0.9854145854145854,
+        "f1-score": 0.9855059995621345,
+        "support": 5005.0
+      }
+    },
+    "comparison": {
+      "best_traditional": "RandomForest",
+      "traditional_f1_macro": 0.9970232431581252,
+      "mlp_f1_macro": 0.9816834737152307,
+      "delta_f1_macro": -0.015339769442894502,
+      "interpretation": "Tree ensembles (Random Forest) remain extremely strong on small tabular datasets; the MLP closes most of the gap and would scale better with more data, but for this data shape the ensemble wins - an honest, expected result documented in the report."
+    }
+  },
+  "nlp": {
+    "dataset": "UCI SMS Spam Collection (real, 5,574 messages)",
+    "preprocessing_pipeline": [
+      "lowercase",
+      "URL/EMAIL/NUM masking",
+      "punctuation removal",
+      "NLTK stop-word removal",
+      "Porter stemming",
+      "TF-IDF (1-2 grams, 3000 features)"
+    ],
+    "metrics": {
+      "LogisticRegression": {
+        "accuracy": 0.979372197309417,
+        "precision": 0.9772727272727273,
+        "recall": 0.8657718120805369,
+        "f1": 0.9181494661921709
+      },
+      "NaiveBayes": {
+        "accuracy": 0.9757847533632287,
+        "precision": 1.0,
+        "recall": 0.8187919463087249,
+        "f1": 0.9003690036900369
+      },
+      "LSTM(Keras)": {
+        "accuracy": 0.9847533632286996,
+        "precision": 0.9925373134328358,
+        "recall": 0.8926174496644296,
+        "f1": 0.9399293286219081
+      }
+    },
+    "best_model": "LSTM(Keras)",
+    "best_classic": "LogisticRegression",
+    "classification_report": {
+      "ham": {
+        "precision": 0.9796541200406917,
+        "recall": 0.9968944099378882,
+        "f1-score": 0.9881990764494613,
+        "support": 966.0
+      },
+      "spam": {
+        "precision": 0.9772727272727273,
+        "recall": 0.8657718120805369,
+        "f1-score": 0.9181494661921709,
+        "support": 149.0
+      },
+      "accuracy": 0.979372197309417,
+      "macro avg": {
+        "precision": 0.9784634236567096,
+        "recall": 0.9313331110092126,
+        "f1-score": 0.953174271320816,
+        "support": 1115.0
+      },
+      "weighted avg": {
+        "precision": 0.9793358890788741,
+        "recall": 0.979372197309417,
+        "f1-score": 0.978838186827635,
+        "support": 1115.0
+      }
+    },
+    "top_spam_terms": [
+      "num",
+      "call num",
+      "url",
+      "txt",
+      "free",
+      "repli",
+      "mobil",
+      "text",
+      "claim",
+      "servic",
+      "stop",
+      "tone",
+      "prize",
+      "num num",
+      "win",
+      "call",
+      "rington",
+      "chat"
+    ],
+    "top_ham_terms": [
+      "ltgt",
+      "im",
+      "ok",
+      "ill",
+      "got",
+      "da",
+      "lor",
+      "good",
+      "hey",
+      "wat",
+      "work",
+      "home",
+      "sorri",
+      "later",
+      "come",
+      "go",
+      "right",
+      "that"
+    ],
+    "n_train": 4457,
+    "n_test": 1115
+  },
+  "cv": {
+    "approach": "byte-plot malware visualization + CNN (Nataraj et al. 2011)",
+    "image_preprocessing": [
+      "48x48 grayscale PNG",
+      "normalize pixels to [0,1]",
+      "stratified 80/20 split",
+      "sparse integer labels"
+    ],
+    "architecture": "Conv2D(32,3x3)+MaxPool -> Conv2D(64,3x3)+MaxPool -> Dense128 + Dropout0.35 -> Softmax4",
+    "params": 838660,
+    "epochs_trained": 14,
+    "train_images": 576,
+    "test_images": 144,
+    "metrics": {
+      "accuracy": 1.0,
+      "f1_macro": 1.0
+    },
+    "hog_svm_baseline": {
+      "accuracy": 1.0,
+      "f1_macro": 1.0,
+      "features": "HOG (9 orientations, 8x8 cells, 2x2 blocks)",
+      "note": "Classic pipeline: hand-crafted texture features + RBF SVM, compared against the CNN on the same split."
+    },
+    "classification_report": {
+      "Allaple_A": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 36.0
+      },
+      "Autorun_K": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 36.0
+      },
+      "C2LOP_P": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 36.0
+      },
+      "Yuner_A": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 36.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 144.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 144.0
+      }
+    }
+  },
+  "rl": {
+    "algorithm": "tabular Q-Learning (hand-implemented update rule)",
+    "update_rule": "Q[s,a] += alpha*(r + gamma*max Q[s',a'] - Q[s,a])",
+    "states": "18 = 3 threat x 3 confidence x 2 criticality",
+    "actions": [
+      "Monitor",
+      "Alert_Analyst",
+      "Block_IP",
+      "Isolate_Host"
+    ],
+    "hyperparameters": {
+      "episodes": 6000,
+      "alpha": 0.1,
+      "gamma": 0.9,
+      "epsilon": "1.0 -> 0.05 (x0.9995/episode)"
+    },
+    "reward_design": {
+      "miss_scale": 4,
+      "benign_monitor": 1,
+      "benign_block": -3,
+      "benign_isolate": -5,
+      "benign_alert": -1,
+      "threat_alert": 2,
+      "threat_block": 3,
+      "threat_isolate_high_crit_malicious": 5,
+      "threat_isolate_other": 1,
+      "threat_monitor_suspicious": -2
+    },
+    "baseline_comparison": {
+      "AlwaysMonitor": -3.667,
+      "AlwaysBlock": 1.0,
+      "Random": -0.45,
+      "Q-Learning policy": 2.333
+    },
+    "how_it_learns": "The agent tries actions at random first; every action returns a reward from the SOC cost model. The Q-update strengthens state-action pairs that earned high long-term reward, so successful response strategies emerge purely from reward feedback."
+  },
+  "agent": {
+    "n_events": 27,
+    "high_risk": 8,
+    "disagreements": 1,
+    "ioc_events": 1,
+    "by_action": {
+      "Monitor": 14,
+      "Isolate_Host": 7,
+      "Alert_Analyst": 4,
+      "Block_IP": 2
+    },
+    "flow_accuracy": 1.0,
+    "workflow": [
+      "receive event",
+      "route to engine",
+      "model prediction + confidence",
+      "IsolationForest second opinion",
+      "threat-intel IOC enrichment",
+      "risk score fusion",
+      "RL policy response",
+      "incident + report writing"
+    ]
+  }
+}

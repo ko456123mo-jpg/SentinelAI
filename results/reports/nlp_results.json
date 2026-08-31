@@ -1,0 +1,102 @@
+{
+  "dataset": "UCI SMS Spam Collection (real, 5,574 messages)",
+  "preprocessing_pipeline": [
+    "lowercase",
+    "URL/EMAIL/NUM masking",
+    "punctuation removal",
+    "NLTK stop-word removal",
+    "Porter stemming",
+    "TF-IDF (1-2 grams, 3000 features)"
+  ],
+  "metrics": {
+    "LogisticRegression": {
+      "accuracy": 0.979372197309417,
+      "precision": 0.9772727272727273,
+      "recall": 0.8657718120805369,
+      "f1": 0.9181494661921709
+    },
+    "NaiveBayes": {
+      "accuracy": 0.9757847533632287,
+      "precision": 1.0,
+      "recall": 0.8187919463087249,
+      "f1": 0.9003690036900369
+    },
+    "LSTM(Keras)": {
+      "accuracy": 0.9847533632286996,
+      "precision": 0.9925373134328358,
+      "recall": 0.8926174496644296,
+      "f1": 0.9399293286219081
+    }
+  },
+  "best_model": "LSTM(Keras)",
+  "best_classic": "LogisticRegression",
+  "classification_report": {
+    "ham": {
+      "precision": 0.9796541200406917,
+      "recall": 0.9968944099378882,
+      "f1-score": 0.9881990764494613,
+      "support": 966.0
+    },
+    "spam": {
+      "precision": 0.9772727272727273,
+      "recall": 0.8657718120805369,
+      "f1-score": 0.9181494661921709,
+      "support": 149.0
+    },
+    "accuracy": 0.979372197309417,
+    "macro avg": {
+      "precision": 0.9784634236567096,
+      "recall": 0.9313331110092126,
+      "f1-score": 0.953174271320816,
+      "support": 1115.0
+    },
+    "weighted avg": {
+      "precision": 0.9793358890788741,
+      "recall": 0.979372197309417,
+      "f1-score": 0.978838186827635,
+      "support": 1115.0
+    }
+  },
+  "top_spam_terms": [
+    "num",
+    "call num",
+    "url",
+    "txt",
+    "free",
+    "repli",
+    "mobil",
+    "text",
+    "claim",
+    "servic",
+    "stop",
+    "tone",
+    "prize",
+    "num num",
+    "win",
+    "call",
+    "rington",
+    "chat"
+  ],
+  "top_ham_terms": [
+    "ltgt",
+    "im",
+    "ok",
+    "ill",
+    "got",
+    "da",
+    "lor",
+    "good",
+    "hey",
+    "wat",
+    "work",
+    "home",
+    "sorri",
+    "later",
+    "come",
+    "go",
+    "right",
+    "that"
+  ],
+  "n_train": 4457,
+  "n_test": 1115
+}

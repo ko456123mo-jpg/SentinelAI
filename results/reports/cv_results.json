@@ -1,0 +1,63 @@
+{
+  "approach": "byte-plot malware visualization + CNN (Nataraj et al. 2011)",
+  "image_preprocessing": [
+    "48x48 grayscale PNG",
+    "normalize pixels to [0,1]",
+    "stratified 80/20 split",
+    "sparse integer labels"
+  ],
+  "architecture": "Conv2D(32,3x3)+MaxPool -> Conv2D(64,3x3)+MaxPool -> Dense128 + Dropout0.35 -> Softmax4",
+  "params": 838660,
+  "epochs_trained": 14,
+  "train_images": 576,
+  "test_images": 144,
+  "metrics": {
+    "accuracy": 1.0,
+    "f1_macro": 1.0
+  },
+  "hog_svm_baseline": {
+    "accuracy": 1.0,
+    "f1_macro": 1.0,
+    "features": "HOG (9 orientations, 8x8 cells, 2x2 blocks)",
+    "note": "Classic pipeline: hand-crafted texture features + RBF SVM, compared against the CNN on the same split."
+  },
+  "classification_report": {
+    "Allaple_A": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 36.0
+    },
+    "Autorun_K": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 36.0
+    },
+    "C2LOP_P": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 36.0
+    },
+    "Yuner_A": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 36.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 144.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 144.0
+    }
+  }
+}

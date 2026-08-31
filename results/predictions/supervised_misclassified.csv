@@ -1,0 +1,13 @@
+true,pred
+BruteForce,Benign
+BruteForce,Benign
+BruteForce,Benign
+BruteForce,Benign
+Benign,Botnet
+Botnet,Benign
+Benign,Botnet
+Benign,Botnet
+BruteForce,Benign
+Benign,BruteForce
+Benign,Botnet
+Benign,Botnet

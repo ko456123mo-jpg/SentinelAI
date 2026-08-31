@@ -1,0 +1,91 @@
+{
+  "rows_raw": 25200,
+  "justifications": {
+    "duplicates_removed": "Duplicated flow records (double export) would bias the trained models and inflate accuracy.",
+    "missing_imputed": "Median imputation for byte_std / flow_iat_mean - median is robust to the heavy right tail.",
+    "one_hot_encoding": "'protocol' is nominal (no order) -> one-hot avoids inventing a fake ordinal relationship.",
+    "log1p_transform": "Byte/packet counts are right-skewed; log1p compresses extreme values toward normality.",
+    "standard_scaling": "KNN, SVM and MLP need features on the same scale; fitted on train only (no leakage).",
+    "feature_selection": "Mutual-information SelectKBest keeps the 12 most informative features (less noise, faster SVM).",
+    "stratified_split": "80/20 stratified split preserves the class imbalance in both train and test sets."
+  },
+  "duplicates_removed": 178,
+  "negative_values_clipped": 75,
+  "missing_before": {
+    "byte_std": 378,
+    "flow_iat_mean": 378
+  },
+  "missing_after": 0,
+  "medians": {
+    "duration": 1.8977665720221024,
+    "src_port": 46030.0,
+    "dst_port": 443.0,
+    "src_bytes": 122.86625753360079,
+    "dst_bytes": 358.46458787363315,
+    "src_pkts": 25.0,
+    "dst_pkts": 10.0,
+    "syn_rate": 0.40438232124378837,
+    "ack_rate": 0.5399067690708151,
+    "psh_rate": 0.1779711051439912,
+    "avg_pkt_size": 188.52241277486593,
+    "byte_std": 43.430085815128535,
+    "flow_iat_mean": 56.952356509658415,
+    "active_duration": 1.2185385488384388,
+    "is_land": 0.0
+  },
+  "label_mapping": {
+    "Benign": 0,
+    "Botnet": 1,
+    "BruteForce": 2,
+    "DDoS": 3,
+    "PortScan": 4
+  },
+  "log1p_columns": [
+    "src_bytes",
+    "dst_bytes",
+    "byte_std",
+    "flow_iat_mean",
+    "duration",
+    "active_duration"
+  ],
+  "features_kept": [
+    "duration",
+    "dst_port",
+    "src_bytes",
+    "dst_bytes",
+    "src_pkts",
+    "dst_pkts",
+    "syn_rate",
+    "ack_rate",
+    "avg_pkt_size",
+    "byte_std",
+    "flow_iat_mean",
+    "active_duration"
+  ],
+  "features_dropped": [
+    "src_port",
+    "psh_rate",
+    "is_land",
+    "proto_TCP",
+    "proto_UDP"
+  ],
+  "rows_clean": 25022,
+  "features_after_encoding": 17,
+  "features_kept_count": 12,
+  "train_rows": 20017,
+  "test_rows": 5005,
+  "train_class_distribution": {
+    "Benign": 8888,
+    "Botnet": 1641,
+    "BruteForce": 2453,
+    "DDoS": 4021,
+    "PortScan": 3014
+  },
+  "test_class_distribution": {
+    "Benign": 2222,
+    "Botnet": 410,
+    "BruteForce": 614,
+    "DDoS": 1005,
+    "PortScan": 754
+  }
+}

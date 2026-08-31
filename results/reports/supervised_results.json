@@ -1,0 +1,210 @@
+{
+  "metrics_per_model": {
+    "LogisticRegression": {
+      "accuracy": 0.9334665334665335,
+      "precision_macro": 0.9194736753219936,
+      "recall_macro": 0.9299536165233537,
+      "f1_macro": 0.9241506572281937,
+      "f1_weighted": 0.9332613719928484
+    },
+    "KNN": {
+      "accuracy": 0.971028971028971,
+      "precision_macro": 0.9505315968410839,
+      "recall_macro": 0.9846092295067639,
+      "f1_macro": 0.9660292989278287,
+      "f1_weighted": 0.971396218558882
+    },
+    "DecisionTree": {
+      "accuracy": 0.9918081918081918,
+      "precision_macro": 0.9921063610363392,
+      "recall_macro": 0.9901368971563544,
+      "f1_macro": 0.9911123390860663,
+      "f1_weighted": 0.9918006983690991
+    },
+    "RandomForest": {
+      "accuracy": 0.9976023976023976,
+      "precision_macro": 0.9967166182049423,
+      "recall_macro": 0.9973434766214367,
+      "f1_macro": 0.9970232431581252,
+      "f1_weighted": 0.9976033484885569
+    },
+    "SVM": {
+      "accuracy": 0.9746253746253746,
+      "precision_macro": 0.95794478394377,
+      "recall_macro": 0.9815310900476465,
+      "f1_macro": 0.9690562551159367,
+      "f1_weighted": 0.9748494134097045
+    },
+    "NaiveBayes": {
+      "accuracy": 0.9196803196803197,
+      "precision_macro": 0.882939172962774,
+      "recall_macro": 0.9605603627018777,
+      "f1_macro": 0.9131324300503867,
+      "f1_weighted": 0.9206597878058431
+    }
+  },
+  "best_model": "RandomForest",
+  "classification_report_best": {
+    "Benign": {
+      "precision": 0.9972997299729973,
+      "recall": 0.9972997299729973,
+      "f1-score": 0.9972997299729973,
+      "support": 2222.0
+    },
+    "Botnet": {
+      "precision": 0.9879227053140096,
+      "recall": 0.9975609756097561,
+      "f1-score": 0.9927184466019418,
+      "support": 410.0
+    },
+    "BruteForce": {
+      "precision": 0.9983606557377049,
+      "recall": 0.99185667752443,
+      "f1-score": 0.9950980392156863,
+      "support": 614.0
+    },
+    "DDoS": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1005.0
+    },
+    "PortScan": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 754.0
+    },
+    "accuracy": 0.9976023976023976,
+    "macro avg": {
+      "precision": 0.9967166182049423,
+      "recall": 0.9973434766214367,
+      "f1-score": 0.9970232431581252,
+      "support": 5005.0
+    },
+    "weighted avg": {
+      "precision": 0.9976107396207182,
+      "recall": 0.9976023976023976,
+      "f1-score": 0.9976033484885569,
+      "support": 5005.0
+    }
+  },
+  "fp_fn_analysis": [
+    {
+      "class": "Benign",
+      "FP": 6,
+      "FN": 6,
+      "FP_rate": 0.0027,
+      "FN_rate": 0.0027
+    },
+    {
+      "class": "Botnet",
+      "FP": 5,
+      "FN": 1,
+      "FP_rate": 0.0121,
+      "FN_rate": 0.0024
+    },
+    {
+      "class": "BruteForce",
+      "FP": 1,
+      "FN": 5,
+      "FP_rate": 0.0016,
+      "FN_rate": 0.0081
+    },
+    {
+      "class": "DDoS",
+      "FP": 0,
+      "FN": 0,
+      "FP_rate": 0.0,
+      "FN_rate": 0.0
+    },
+    {
+      "class": "PortScan",
+      "FP": 0,
+      "FN": 0,
+      "FP_rate": 0.0,
+      "FN_rate": 0.0
+    }
+  ],
+  "cross_validation": {
+    "LogisticRegression": {
+      "accuracy_mean": 0.9290602103367529,
+      "accuracy_std": 0.001354373606747666,
+      "f1_macro_mean": 0.9200996651111906,
+      "f1_macro_std": 0.0019083730128629903,
+      "folds": 5
+    },
+    "KNN": {
+      "accuracy_mean": 0.9651794246223424,
+      "accuracy_std": 0.0026345758011922706,
+      "f1_macro_mean": 0.9608743240725637,
+      "f1_macro_std": 0.0032849472879147275,
+      "folds": 5
+    },
+    "DecisionTree": {
+      "accuracy_mean": 0.989958567537883,
+      "accuracy_std": 0.0009913878962362244,
+      "f1_macro_mean": 0.9885107658510546,
+      "f1_macro_std": 0.0010933408202609205,
+      "folds": 5
+    },
+    "RandomForest": {
+      "accuracy_mean": 0.9969026227332499,
+      "accuracy_std": 0.000681359716651898,
+      "f1_macro_mean": 0.996109401221496,
+      "f1_macro_std": 0.0009427382653401815,
+      "folds": 5
+    },
+    "SVM": {
+      "accuracy_mean": 0.9712,
+      "accuracy_std": 0.002694438717061509,
+      "f1_macro_mean": 0.9669422555828646,
+      "f1_macro_std": 0.0026575750410735583,
+      "folds": 5
+    },
+    "NaiveBayes": {
+      "accuracy_mean": 0.9146225370931841,
+      "accuracy_std": 0.003816857029434659,
+      "f1_macro_mean": 0.9091355875462502,
+      "f1_macro_std": 0.0037490662259654743,
+      "folds": 5
+    }
+  },
+  "grid_search": {
+    "best_params": {
+      "max_depth": 22,
+      "n_estimators": 200
+    },
+    "best_cv_f1_macro": 0.9959200927595743,
+    "grid": {
+      "n_estimators": [
+        100,
+        200,
+        400
+      ],
+      "max_depth": [
+        null,
+        14,
+        22
+      ]
+    }
+  },
+  "imbalance_handling": {
+    "default": {
+      "f1_macro": 0.9970232431581252,
+      "recall_Botnet": 0.9975609756097561,
+      "recall_BruteForce": 0.99185667752443
+    },
+    "balanced": {
+      "f1_macro": 0.9973894619974573,
+      "recall_Botnet": 1.0,
+      "recall_BruteForce": 0.990228013029316
+    },
+    "note": "class_weight='balanced' re-weights minority classes in the loss; effect on this dataset is small because the overlap (not the imbalance) drives the remaining errors."
+  },
+  "svm_fit_subsample": "SVC fitted on a capped sample of 10000 rows (O(n^2) cost), evaluated on the full test set",
+  "discussion": {
+    "false_positives": "A FP flags legitimate traffic as an attack -> analyst time wasted and possible service disruption.",
+    "false_negatives": "A FN lets real attack traffic pass unnoticed -> the most expensive error in a SOC, hence recall matters most."
+  }
+}

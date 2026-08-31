@@ -1,0 +1,23 @@
+{
+  "n_events": 27,
+  "high_risk": 8,
+  "disagreements": 1,
+  "ioc_events": 1,
+  "by_action": {
+    "Monitor": 14,
+    "Isolate_Host": 7,
+    "Alert_Analyst": 4,
+    "Block_IP": 2
+  },
+  "flow_accuracy": 1.0,
+  "workflow": [
+    "receive event",
+    "route to engine",
+    "model prediction + confidence",
+    "IsolationForest second opinion",
+    "threat-intel IOC enrichment",
+    "risk score fusion",
+    "RL policy response",
+    "incident + report writing"
+  ]
+}

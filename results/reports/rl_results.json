@@ -1,0 +1,36 @@
+{
+  "algorithm": "tabular Q-Learning (hand-implemented update rule)",
+  "update_rule": "Q[s,a] += alpha*(r + gamma*max Q[s',a'] - Q[s,a])",
+  "states": "18 = 3 threat x 3 confidence x 2 criticality",
+  "actions": [
+    "Monitor",
+    "Alert_Analyst",
+    "Block_IP",
+    "Isolate_Host"
+  ],
+  "hyperparameters": {
+    "episodes": 6000,
+    "alpha": 0.1,
+    "gamma": 0.9,
+    "epsilon": "1.0 -> 0.05 (x0.9995/episode)"
+  },
+  "reward_design": {
+    "miss_scale": 4,
+    "benign_monitor": 1,
+    "benign_block": -3,
+    "benign_isolate": -5,
+    "benign_alert": -1,
+    "threat_alert": 2,
+    "threat_block": 3,
+    "threat_isolate_high_crit_malicious": 5,
+    "threat_isolate_other": 1,
+    "threat_monitor_suspicious": -2
+  },
+  "baseline_comparison": {
+    "AlwaysMonitor": -3.667,
+    "AlwaysBlock": 1.0,
+    "Random": -0.45,
+    "Q-Learning policy": 2.333
+  },
+  "how_it_learns": "The agent tries actions at random first; every action returns a reward from the SOC cost model. The Q-update strengthens state-action pairs that earned high long-term reward, so successful response strategies emerge purely from reward feedback."
+}
