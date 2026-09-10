@@ -9,6 +9,18 @@ NLP + Computer Vision + Reinforcement Learning + AI Agent).
 
 ---
 
+## 👨‍💻 Developer
+
+| | |
+|---|---|
+| **Name** | **Mohammed Moneer Al-absi** |
+| **Student ID** | 2023050086 |
+| **Section** | Cybersecurity (CS) |
+| **Supervisor** | Eng. Sondos Saif |
+| **Project** | AI Final Project — 2026 |
+
+---
+
 ## 1. Problem definition (Stage 1)
 
 | Item | Description |
