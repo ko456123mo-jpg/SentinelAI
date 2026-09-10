@@ -1017,4 +1017,7 @@ fetch("/api/samples").then(r=>r.json()).then(fs=>{
 if __name__ == "__main__":
     config.ensure_dirs()
     get_agent()                       # load all trained artifacts once
+    # Convenience: open the console in the default browser shortly after start.
+    import threading, webbrowser
+    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:7860")).start()
     app.run(host="0.0.0.0", port=7860, debug=False, threaded=True)

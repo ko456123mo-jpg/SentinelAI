@@ -21,6 +21,36 @@ NLP + Computer Vision + Reinforcement Learning + AI Agent).
 
 ---
 
+## ⚡ Quick Start
+
+> **Requires Python 3.10 – 3.13** (TensorFlow does not support 3.14+ yet).
+
+### Windows — one click
+1. **Code → Download ZIP** → extract the folder
+2. Open the folder → **double-click `run_windows.bat`**
+   (first run installs everything automatically, then the browser opens at `http://localhost:7860`)
+
+### Linux / Kali — one command
+```bash
+git clone https://github.com/ko456123mo-jpg/SentinelAI.git
+cd SentinelAI
+bash run_kali.sh     # finds/creates the environment, installs, starts the console
+```
+
+### Manual (any OS)
+```bash
+pip install -r requirements.txt
+python -m src.webapp               # web console → http://localhost:7860
+python -m src.main --stages agent  # run the AI agent on 27 live events
+python -m src.main                 # retrain everything from scratch (~3 min)
+python -m unittest discover -s tests   # 17/17 tests must pass
+```
+
+> All datasets, trained models (17 artifacts) and results ship **inside the repo** —
+> the console works immediately after install, no training needed.
+
+---
+
 ## 1. Problem definition (Stage 1)
 
 | Item | Description |
