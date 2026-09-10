@@ -128,6 +128,45 @@ class TestThreatIntel(unittest.TestCase):
 
 
 
+class TestRealDataMapping(unittest.TestCase):
+    """The CICIDS2017 / Malimg -> SentinelAI schema mapping (no download)."""
+
+    def test_cicids_label_map_covers_the_five_classes(self):
+        import pandas as pd
+        from src import config
+        raw = ["BENIGN", "DDoS", "DoS Hulk", "DoS GoldenEye",
+               "DoS slowloris", "DoS Slowhttptest", "PortScan",
+               "FTP-Patator", "SSH-Patator", "Bot", "Heartbleed"]
+        mapped = pd.Series(raw).map(config.CICIDS_LABEL_MAP)
+        self.assertEqual(mapped[0], "Benign")
+        self.assertEqual(mapped[1], "DDoS")
+        self.assertEqual(mapped[6], "PortScan")
+        self.assertEqual(mapped[7], "BruteForce")
+        self.assertEqual(mapped[9], "Botnet")
+        # Heartbleed (11 rows) is intentionally out of scope -> dropped
+        self.assertTrue(pd.isna(mapped[10]))
+
+    def test_real_flow_caps_cover_all_classes(self):
+        from src import config
+        self.assertEqual(set(config.REAL_FLOW_CAP.keys()),
+                         set(config.FLOW_CLASSES))
+        self.assertTrue(all(v > 0 for v in config.REAL_FLOW_CAP.values()))
+
+    def test_malimg_family_map_matches_project_families(self):
+        from src import config
+        self.assertEqual(set(config.MALIMG_FAMILY_MAP.values()),
+                         set(config.MALWARE_FAMILIES))
+        self.assertIn("Allaple.A", config.MALIMG_FAMILY_MAP)
+
+    def test_cicids_feature_derivation(self):
+        """syn/ack/psh rates are flag-counts normalised by total packets."""
+        import pandas as pd
+        total = pd.Series([4.0, 0.0]).clip(lower=1.0)
+        syn = (pd.Series([4, 0]) / total).clip(0, 1)
+        self.assertAlmostEqual(syn[0], 1.0)
+        self.assertAlmostEqual(syn[1], 0.0)
+
+
 class TestUnsupervisedExtras(unittest.TestCase):
 
     def test_hierarchical_clustering_recovers_blobs(self):

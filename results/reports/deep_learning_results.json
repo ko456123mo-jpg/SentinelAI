@@ -4,62 +4,62 @@
   "epochs_trained": 60,
   "params": 3077,
   "metrics": {
-    "accuracy": 0.9854145854145854,
-    "precision_macro": 0.9763763533085944,
-    "recall_macro": 0.9873833787202798,
-    "f1_macro": 0.9816834737152307,
-    "f1_weighted": 0.9855059995621345
+    "accuracy": 0.9750346740638003,
+    "precision_macro": 0.9762597277167362,
+    "recall_macro": 0.9853868630882163,
+    "f1_macro": 0.9802493738767992,
+    "f1_weighted": 0.9752989245120977
   },
   "classification_report": {
     "Benign": {
-      "precision": 0.9922267946959304,
-      "recall": 0.9765976597659766,
-      "f1-score": 0.9843501927874801,
-      "support": 2222.0
+      "precision": 0.9936401047512159,
+      "recall": 0.9495888451912764,
+      "f1-score": 0.9711151736745887,
+      "support": 2797.0
     },
     "Botnet": {
-      "precision": 0.9197247706422018,
-      "recall": 0.9780487804878049,
-      "f1-score": 0.9479905437352246,
-      "support": 410.0
+      "precision": 1.0,
+      "recall": 0.9949109414758269,
+      "f1-score": 0.9974489795918368,
+      "support": 393.0
     },
     "BruteForce": {
-      "precision": 0.987012987012987,
-      "recall": 0.990228013029316,
-      "f1-score": 0.9886178861788618,
-      "support": 614.0
+      "precision": 0.9880358923230309,
+      "recall": 0.991,
+      "f1-score": 0.9895157264103844,
+      "support": 1000.0
     },
     "DDoS": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 1005.0
+      "precision": 0.8996226415094339,
+      "recall": 0.994161801501251,
+      "f1-score": 0.9445324881141046,
+      "support": 1199.0
     },
     "PortScan": {
-      "precision": 0.9829172141918529,
-      "recall": 0.9920424403183024,
-      "f1-score": 0.9874587458745875,
-      "support": 754.0
+      "precision": 1.0,
+      "recall": 0.9972727272727273,
+      "f1-score": 0.9986345015930814,
+      "support": 1100.0
     },
-    "accuracy": 0.9854145854145854,
+    "accuracy": 0.9750346740638003,
     "macro avg": {
-      "precision": 0.9763763533085944,
-      "recall": 0.9873833787202798,
-      "f1-score": 0.9816834737152307,
-      "support": 5005.0
+      "precision": 0.9762597277167362,
+      "recall": 0.9853868630882163,
+      "f1-score": 0.9802493738767992,
+      "support": 6489.0
     },
     "weighted avg": {
-      "precision": 0.9858063231377205,
-      "recall": 0.9854145854145854,
-      "f1-score": 0.9855059995621345,
-      "support": 5005.0
+      "precision": 0.97686774733888,
+      "recall": 0.9750346740638003,
+      "f1-score": 0.9752989245120977,
+      "support": 6489.0
     }
   },
   "comparison": {
     "best_traditional": "RandomForest",
-    "traditional_f1_macro": 0.9970232431581252,
-    "mlp_f1_macro": 0.9816834737152307,
-    "delta_f1_macro": -0.015339769442894502,
+    "traditional_f1_macro": 0.9964665747124755,
+    "mlp_f1_macro": 0.9802493738767992,
+    "delta_f1_macro": -0.016217200835676238,
     "interpretation": "Tree ensembles (Random Forest) remain extremely strong on small tabular datasets; the MLP closes most of the gap and would scale better with more data, but for this data shape the ensemble wins - an honest, expected result documented in the report."
   }
 }

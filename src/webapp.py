@@ -377,8 +377,9 @@ height:auto;position:static;display:flex;flex-wrap:wrap;gap:4px}
  <div class="panel"><h3>Pipeline — 11 stages of the project outline</h3>
   <table><tr><th>Stage</th><th>Module</th><th>What it does</th></tr>
   <tr><td>1 Problem</td><td>README / report</td><td>definition, users, goal</td></tr>
-  <tr><td>2 Collection</td><td>data_collection.py</td><td>25,200 flows +
-  5,572 real SMS + 720 images + 18,146-domain live feed</td></tr>
+  <tr><td>2 Collection</td><td>data_collection.py</td><td>32,466 real
+  CICIDS2017 flows + 5,572 real SMS + ~770 real Malimg images +
+  18,146-domain live feed</td></tr>
   <tr><td>3 Preprocessing</td><td>preprocessing.py</td><td>clean / encode /
   scale / select / split (all justified)</td></tr>
   <tr><td>4 Supervised</td><td>supervised_model.py</td><td>6 algorithms +
@@ -403,7 +404,8 @@ height:auto;position:static;display:flex;flex-wrap:wrap;gap:4px}
   <tr><th>Requirement (from the outline PDF)</th><th>Status</th>
   <th>Where</th></tr>
   <tr><td>Data collection</td><td class="check">✓</td><td>Datasets tab —
-  2 real + 2 documented generated sources</td></tr>
+  4 REAL sources (CICIDS2017 + UCI SMS + Malimg + live threat feed),
+  documented generated fallback</td></tr>
   <tr><td>Data preprocessing (justified)</td><td class="check">✓</td>
   <td>Preprocessing tab — every step with its reason</td></tr>
   <tr><td>Supervised model(s)</td><td class="check">✓</td><td>Supervised
@@ -612,7 +614,7 @@ height:auto;position:static;display:flex;flex-wrap:wrap;gap:4px}
   <div style="overflow:auto"><table id="poltable"></table></div>
   <p class="hint">18 states (threat / confidence / asset-criticality) × 4
   actions — badge = the action the agent takes.</p></div>
- <div class="panel"><h3>Self-test (17 tests)</h3>
+ <div class="panel"><h3>Self-test (21 tests)</h3>
   <button class="btn" onclick="runTests()">Run tests → تشغيل</button>
   <pre id="testout" style="display:none;margin-top:12px"></pre></div>
  <div class="panel"><h3>Retraining (CLI)</h3>
@@ -630,21 +632,21 @@ const FIELDS=[["duration",3],["src_port",45000],["dst_port",443],
 ["syn_rate",0.15],["ack_rate",0.85],["psh_rate",0.25],["avg_pkt_size",700],
 ["byte_std",250],["flow_iat_mean",120],["active_duration",2.5],["is_land",0]];
 const PRESETS={
- normal:{duration:3,src_port:45000,dst_port:443,src_bytes:1500,dst_bytes:3000,
-  src_pkts:20,dst_pkts:25,syn_rate:0.15,ack_rate:0.85,psh_rate:0.25,
-  avg_pkt_size:700,byte_std:250,flow_iat_mean:120,active_duration:2.5},
- ddos:{duration:5,src_port:50000,dst_port:80,src_bytes:60,dst_bytes:0,
-  src_pkts:3000,dst_pkts:0,syn_rate:0.99,ack_rate:0.01,psh_rate:0.02,
-  avg_pkt_size:60,byte_std:8,flow_iat_mean:0.5,active_duration:4},
- scan:{duration:0.02,src_port:52000,dst_port:31337,src_bytes:40,dst_bytes:0,
-  src_pkts:2,dst_pkts:0,syn_rate:0.9,ack_rate:0.05,psh_rate:0,
-  avg_pkt_size:40,byte_std:5,flow_iat_mean:0.05,active_duration:0.02},
- brute:{duration:4,src_port:41000,dst_port:22,src_bytes:200,dst_bytes:800,
-  src_pkts:30,dst_pkts:25,syn_rate:0.4,ack_rate:0.55,psh_rate:0.5,
-  avg_pkt_size:250,byte_std:60,flow_iat_mean:200,active_duration:3},
- bot:{duration:1,src_port:39000,dst_port:6667,src_bytes:120,dst_bytes:200,
-  src_pkts:8,dst_pkts:8,syn_rate:0.15,ack_rate:0.7,psh_rate:0.2,
-  avg_pkt_size:100,byte_std:30,flow_iat_mean:30000,active_duration:1}};
+ normal:{duration:0.031,src_port:52051,dst_port:80,src_bytes:68,dst_bytes:137,
+  src_pkts:2,dst_pkts:2,syn_rate:0.0,ack_rate:0.0,psh_rate:0.0,
+  avg_pkt_size:75.5,byte_std:27.9,flow_iat_mean:0.011,active_duration:0.0},
+ ddos:{duration:84.674,src_port:46707,dst_port:80,src_bytes:336,dst_bytes:11595,
+  src_pkts:6,dst_pkts:6,syn_rate:0.0,ack_rate:0.071,psh_rate:0.0,
+  avg_pkt_size:852.6,byte_std:1497.5,flow_iat_mean:6.586,active_duration:0.0},
+ scan:{duration:0.0,src_port:46908,dst_port:3689,src_bytes:0,dst_bytes:6,
+  src_pkts:1,dst_pkts:1,syn_rate:0.0,ack_rate:0.0,psh_rate:0.5,
+  avg_pkt_size:3,byte_std:3.46,flow_iat_mean:0.0,active_duration:0.0},
+ brute:{duration:0.037,src_port:53125,dst_port:21,src_bytes:24,dst_bytes:0,
+  src_pkts:2,dst_pkts:2,syn_rate:0.0,ack_rate:0.0,psh_rate:0.015,
+  avg_pkt_size:12.2,byte_std:11.6,flow_iat_mean:0.037,active_duration:0.0},
+ bot:{duration:0.071,src_port:8080,dst_port:8080,src_bytes:6,dst_bytes:18,
+  src_pkts:3,dst_pkts:3,syn_rate:0.0,ack_rate:0.0,psh_rate:0.143,
+  avg_pkt_size:9,byte_std:3.2,flow_iat_mean:0.011,active_duration:0.0}};
 const EX={phish:"URGENT: your account will be suspended in 24 hours! "+
  "Verify your card now at http://2020bill.com/secure or call 0900-1234",
  spam:"WINNER!! You have been selected to receive a £900 prize! "+
@@ -722,10 +724,10 @@ function analyzeUpload(){const f=$("upl").files[0];if(!f){alert(
  fetch("/api/image",{method:"POST",body:fd}).then(r=>r.json()).then(d=>
  show("res-img",d));}
 /* agent live demo */
-const DEMO_DDOS={duration:5,src_port:50000,dst_port:80,src_bytes:60,
- dst_bytes:0,src_pkts:3000,dst_pkts:0,syn_rate:0.99,ack_rate:0.01,
- psh_rate:0.02,avg_pkt_size:60,byte_std:8,flow_iat_mean:0.5,
- active_duration:4,is_land:0,protocol:"TCP",criticality:1};
+const DEMO_DDOS={duration:84.674,src_port:46707,dst_port:80,src_bytes:336,
+ dst_bytes:11595,src_pkts:6,dst_pkts:6,syn_rate:0.0,ack_rate:0.071,
+ psh_rate:0.0,avg_pkt_size:852.6,byte_std:1497.5,flow_iat_mean:6.586,
+ active_duration:0.0,is_land:0,protocol:"TCP",criticality:1};
 function demoFlow(){fetch("/api/flow",{method:"POST",headers:
  {"Content-Type":"application/json"},body:JSON.stringify(DEMO_DDOS)})
  .then(r=>r.json()).then(d=>show("res-agent",d));}

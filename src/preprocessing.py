@@ -47,6 +47,10 @@ RAW_FLOWS = os.path.join(config.RAW_DIR, "network_flows.csv")
 JUSTIFICATIONS = {
     "duplicates_removed": "Duplicated flow records (double export) would "
                           "bias the trained models and inflate accuracy.",
+    "infinite_values_replaced": "Rate features (bytes/s etc.) can be inf "
+                                "when the flow duration is 0 - replaced by "
+                                "NaN and imputed like any other missing "
+                                "value (real CICIDS2017 artefact).",
     "missing_imputed": "Median imputation for byte_std / flow_iat_mean - "
                        "median is robust to the heavy right tail.",
     "one_hot_encoding": "'protocol' is nominal (no order) -> one-hot "
@@ -71,6 +75,11 @@ def clean(data: pd.DataFrame, report: dict) -> pd.DataFrame:
     n0 = len(data)
     data = data.drop_duplicates().reset_index(drop=True)
     report["duplicates_removed"] = int(n0 - len(data))
+
+    # infinite values (division-by-zero in real flow rates) -> NaN
+    n_inf = int(np.isinf(data.select_dtypes(include="number")).sum().sum())
+    data = data.replace([np.inf, -np.inf], np.nan)
+    report["infinite_values_replaced"] = n_inf
 
     # clip impossible negative packet sizes to 0
     neg = (data["avg_pkt_size"] < 0).sum()

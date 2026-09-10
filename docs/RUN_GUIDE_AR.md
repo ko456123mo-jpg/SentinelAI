@@ -74,11 +74,11 @@ python -m src.main --list
 ```
 الأسماء: `collect, preprocess, supervised, unsupervised, dl, nlp, cv, rl, agent`
 
-### تشغيل الاختبارات (17 اختباراً)
+### تشغيل الاختبارات (21 اختباراً)
 ```
 python -m unittest discover -s tests
 ```
-النتيجة المطلوبة: `OK` — تعني 17/17 ناجحة
+النتيجة المطلوبة: `OK` — تعني 21/21 ناجحة
 
 ### 🖥️ تشغيل الواجهة الرسومية (وحدة تحكم SOC)
 ```
@@ -126,7 +126,7 @@ python -m src.webapp       # ← ثم افتح المتصفح على: http://loc
 2) python -m src.main                  ← شغّل كاملاً (اتركه يعمل واشرح أثناءها)
 3) افتح results/reports/security_report.md   ← مخرج الوكيل الحي
 4) افتح models/rl_policy.csv            ← سياسة RL المتعلمة
-5) python -m unittest discover -s tests    ← اختم بـ 17/17 OK
+5) python -m unittest discover -s tests    ← اختم بـ 21/21 OK
 ```
 
 > 💡 نصيحة: البذرة ثابتة (42) لذا النتائج ستتطابق تقريباً في كل تشغيل —

@@ -1,5 +1,5 @@
 {
-  "dataset": "UCI SMS Spam Collection (real, 5,574 messages)",
+  "dataset": "UCI SMS Spam Collection (real, 5,572 messages)",
   "preprocessing_pipeline": [
     "lowercase",
     "URL/EMAIL/NUM masking",

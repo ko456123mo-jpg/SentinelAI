@@ -3,15 +3,16 @@ SentinelAI - Stage 2: Data Collection
 =====================================
 Collects / generates the three data sources used by the system:
 
-1. NETWORK TRAFFIC FLOWS  (generated - statistically modelled, documented)
-   25,000 bidirectional flow records with 16 features and 5 classes
-   (Benign / DDoS / PortScan / BruteForce / Botnet).
-   Generation is fully seeded => reproducible. Using generated data is
-   explicitly allowed by the project requirements ("generated data"),
-   and every distribution used is documented in the code below.
+1. NETWORK TRAFFIC FLOWS  (REAL - CICIDS2017 captured traffic, mapped to
+   the 16-feature schema; a documented seeded generator remains as the
+   offline fallback when the corpus cannot be downloaded).
+   5 classes (Benign / DDoS / PortScan / BruteForce / Botnet), sampled
+   per-class to keep the natural imbalance while staying tractable.
+   The CICIDS2017 labels are remapped (DoS*/DDoS -> DDoS, Patator ->
+   BruteForce, Bot -> Botnet) and every column mapping is documented.
 
 2. SPAM / PHISHING TEXTS  (REAL public dataset - UCI Machine Learning
-   Repository, SMS Spam Collection, 5,574 real messages).
+   Repository, SMS Spam Collection, 5,572 real messages).
    Downloaded from: https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection
    If the raw file is missing (offline run) a small documented fallback
    corpus is generated instead.
@@ -298,8 +299,192 @@ def generate_network_flows() -> str:
 
 
 # ======================================================================
-# 2. SPAM TEXTS  (real UCI dataset with documented fallback)
+# 1b. REAL NETWORK FLOWS - CICIDS2017 (auto-download + documented mapping)
 # ======================================================================
+# Only the columns needed for the 16-feature schema are read (memory-safe).
+_CICIDS_COLUMNS = [
+    "Flow Duration", "Protocol", "Source Port", "Destination Port",
+    "Total Length of Fwd Packets", "Total Length of Bwd Packets",
+    "Total Fwd Packets", "Total Backward Packets",
+    "SYN Flag Count", "ACK Flag Count", "PSH Flag Count",
+    "Average Packet Size", "Packet Length Mean", "Packet Length Std",
+    "Flow IAT Mean", "Active Mean", "Source IP", "Destination IP", "Label",
+]
+_CICIDS_NUMERIC = [
+    "Flow Duration", "Source Port", "Destination Port",
+    "Total Length of Fwd Packets", "Total Length of Bwd Packets",
+    "Total Fwd Packets", "Total Backward Packets",
+    "SYN Flag Count", "ACK Flag Count", "PSH Flag Count",
+    "Average Packet Size", "Packet Length Mean", "Packet Length Std",
+    "Flow IAT Mean", "Active Mean",
+]
+
+
+def _download_cicids_files() -> list:
+    """Download the 5 needed CICIDS2017 parquet files once (cached)."""
+    import urllib.request
+
+    os.makedirs(config.CICIDS_CACHE_DIR, exist_ok=True)
+    got = []
+    for fname in config.CICIDS2017_FILES:
+        dest = os.path.join(config.CICIDS_CACHE_DIR, fname)
+        if os.path.exists(dest) and os.path.getsize(dest) > 1_000_000:
+            got.append(dest)
+            continue
+        url = config.CICIDS2017_PARQUET_BASE + fname
+        try:
+            print(f"    [data] downloading {fname} ...")
+            urllib.request.urlretrieve(url, dest)
+            got.append(dest)
+        except Exception as exc:                     # offline -> skip file
+            print(f"    [warn] CICIDS2017 download failed ({exc})")
+    return got
+
+
+def _cicids_to_schema(d: pd.DataFrame) -> pd.DataFrame:
+    """Map one cleaned CICIDS2017 frame to the 16-feature schema."""
+    proto = d["Protocol"].map({6: "TCP", 17: "UDP", 1: "ICMP"}).fillna("TCP")
+    total_pkts = (d["Total Fwd Packets"] +
+                  d["Total Backward Packets"]).clip(lower=1.0)
+    src_ip = d["Source IP"].astype(str)
+    dst_ip = d["Destination IP"].astype(str)
+    return pd.DataFrame({
+        "duration": d["Flow Duration"] / 1e6,               # us -> s
+        "protocol": proto,
+        "src_port": d["Source Port"],
+        "dst_port": d["Destination Port"],
+        "src_bytes": d["Total Length of Fwd Packets"],
+        "dst_bytes": d["Total Length of Bwd Packets"],
+        "src_pkts": d["Total Fwd Packets"],
+        "dst_pkts": d["Total Backward Packets"],
+        "syn_rate": (d["SYN Flag Count"] / total_pkts).clip(0, 1),
+        "ack_rate": (d["ACK Flag Count"] / total_pkts).clip(0, 1),
+        "psh_rate": (d["PSH Flag Count"] / total_pkts).clip(0, 1),
+        "avg_pkt_size": d["Average Packet Size"].fillna(
+            d["Packet Length Mean"]),
+        "byte_std": d["Packet Length Std"],
+        "flow_iat_mean": d["Flow IAT Mean"] / 1e6,          # us -> s
+        "active_duration": d["Active Mean"] / 1e6,          # us -> s
+        "is_land": ((src_ip == dst_ip) &
+                    (d["Source Port"] == d["Destination Port"])
+                    ).astype(int),
+        "label": d["label"],
+    })
+
+
+def load_real_network_flows() -> pd.DataFrame:
+    """Build the 16-feature network_flows.csv from REAL CICIDS2017 traffic.
+
+    Documented mapping (CICIDS2017 -> SentinelAI schema):
+      Flow Duration (us)  -> duration (s)
+      Protocol (6/17/1)   -> protocol (TCP/UDP/ICMP)
+      Source/Destination Port -> src_port / dst_port
+      Total Length of Fwd/Bwd Packets -> src_bytes / dst_bytes
+      Total Fwd/Backward Packets       -> src_pkts / dst_pkts
+      SYN/ACK/PSH Flag Count / packets  -> syn_rate / ack_rate / psh_rate
+      Average Packet Size              -> avg_pkt_size
+      Packet Length Std                -> byte_std
+      Flow IAT Mean (us)               -> flow_iat_mean (s)
+      Active Mean (us)                 -> active_duration (s)
+      src_ip==dst_ip & src_port==dst_port -> is_land (LAND condition)
+    Labels: BENIGN->Benign, DoS*/DDoS->DDoS, PortScan->PortScan,
+    FTP/SSH-Patator->BruteForce, Bot->Botnet (Heartbleed dropped: 11 rows).
+
+    Memory-safe: each parquet is read with only the needed columns and
+    subsampled per class immediately, so the full 2.8M-row corpus is never
+    held in memory at once.
+    """
+    files = _download_cicids_files()
+    if not files:
+        raise RuntimeError("no CICIDS2017 parquet files available")
+
+    remaining = dict(config.REAL_FLOW_CAP)
+    parts = []
+    for f in files:
+        d = pd.read_parquet(f, columns=_CICIDS_COLUMNS)
+        d = d.rename(columns={c: c.strip() for c in d.columns})
+        for c in _CICIDS_NUMERIC:                    # float32 halves memory
+            d[c] = d[c].astype("float32")
+        d["label"] = d["Label"].map(config.CICIDS_LABEL_MAP)
+        d = d.dropna(subset=["label"])
+
+        # per-class subsample against the (shared) caps, file by file
+        keep = []
+        for cls, cap in remaining.items():
+            sub = d[d["label"] == cls]
+            if not len(sub):
+                continue
+            n = min(len(sub), cap)
+            keep.append(sub.sample(n, random_state=config.SEED))
+            remaining[cls] = cap - n
+        d = pd.concat(keep, ignore_index=True)
+        parts.append(_cicids_to_schema(d))
+
+    data = (pd.concat(parts, ignore_index=True)
+            .replace([np.inf, -np.inf], np.nan)
+            .dropna(subset=["label"])
+            .sample(frac=1.0, random_state=config.SEED)
+            .reset_index(drop=True))
+
+    path = os.path.join(config.RAW_DIR, "network_flows.csv")
+    data.to_csv(path, index=False)
+    print(f"    [data] network_flows.csv -> {data.shape[0]:,} REAL "
+          f"CICIDS2017 rows x {data.shape[1]} cols "
+          f"({dict(data.label.value_counts())})")
+    return data
+
+
+# ======================================================================
+# 1c. REAL MALWARE IMAGES - Malimg corpus (resized to 48x48 byte-plots)
+# ======================================================================
+def load_real_malware_images() -> str:
+    """Extract the four real Malimg families (Nataraj et al. 2011) into
+    data/raw/malware_images/<Family>/, resized to 48x48 grayscale."""
+    import io
+    import urllib.request
+    import zipfile
+
+    if not os.path.exists(config.MALIMG_ZIP):
+        print(f"    [data] downloading Malimg corpus ...")
+        try:
+            urllib.request.urlretrieve(config.MALIMG_URL, config.MALIMG_ZIP)
+        except Exception as exc:
+            raise RuntimeError(f"Malimg download failed: {exc}")
+
+    import shutil
+    from PIL import Image
+    # remove family folders that are no longer part of the project
+    valid = set(config.MALIMG_FAMILY_MAP.values())
+    for d in os.listdir(config.MALWARE_IMG_DIR):
+        full = os.path.join(config.MALWARE_IMG_DIR, d)
+        if os.path.isdir(full) and d not in valid:
+            shutil.rmtree(full)
+    rng = np.random.default_rng(config.SEED)
+    with zipfile.ZipFile(config.MALIMG_ZIP) as z:
+        names = z.namelist()
+        for src_fam, dst_fam in config.MALIMG_FAMILY_MAP.items():
+            dst_dir = os.path.join(config.MALWARE_IMG_DIR, dst_fam)
+            os.makedirs(dst_dir, exist_ok=True)
+            for old in os.listdir(dst_dir):              # clear stale files
+                os.remove(os.path.join(dst_dir, old))
+            # pool every image of the family (train + validation, both
+            # published mirrors), then cap to keep the classes balanced
+            cand = [n for n in names
+                    if f"/{src_fam}/" in n and n.lower().endswith(".png")]
+            cap = config.REAL_MALWARE_CAP.get(dst_fam, len(cand))
+            chosen = rng.choice(cand, min(len(cand), cap), replace=False)
+            for i, name in enumerate(sorted(chosen)):
+                im = Image.open(io.BytesIO(z.read(name))).convert("L")
+                im = im.resize((config.MALWARE_IMG_SIZE,
+                                config.MALWARE_IMG_SIZE))
+                im.save(os.path.join(dst_dir, f"{dst_fam}_{i:04d}.png"))
+            print(f"    [data] malware_images/{dst_fam} -> {len(chosen)} "
+                  f"real Malimg byte-plots (resized to "
+                  f"{config.MALWARE_IMG_SIZE}x{config.MALWARE_IMG_SIZE})")
+    return config.MALWARE_IMG_DIR
+
+
+
 _FALLBACK_SPAM = [
     ("spam", "URGENT! You have won a 1 week FREE membership in our £100,000 "
              "Prize Jackpot! Txt the word: CLAIM to 81025 T&Cs 08712405020"),
@@ -333,7 +518,7 @@ def load_sms_dataset() -> pd.DataFrame:
     if os.path.exists(config.SMS_RAW_FILE):
         df = pd.read_csv(config.SMS_RAW_FILE, sep="\t", header=None,
                          names=["label", "text"], encoding="utf-8")
-        source = ("REAL dataset - UCI SMS Spam Collection (5,574 real "
+        source = ("REAL dataset - UCI SMS Spam Collection (5,572 real "
                   "messages). https://archive.ics.uci.edu/ml/datasets/"
                   "SMS+Spam+Collection")
     else:
@@ -356,30 +541,34 @@ def _family_pattern(family: str) -> np.ndarray:
     """Visual signature of each synthetic malware family (48x48 grayscale).
 
     Mimics how real families look in byte-plot visualization:
-      Allaple_A : high-entropy noise with faint horizontal bands
-      Autorun_K : strong vertical stripes (repeating code sections)
-      C2LOP_P   : sharp rectangular blocks (packed sections)
-      Yuner_A   : smooth low-entropy gradient (unpacked interpret code)
+      Allaple_A  : high-entropy noise with faint horizontal bands
+      C2LOP_P    : sharp rectangular blocks (packed sections)
+      Lolyda_AA2 : repeating small square tiles (obfuscated code chunks)
+      Alueron_genJ : dense fine mesh (downloader skeleton)
     """
     s = config.MALWARE_IMG_SIZE
     yy, xx = np.mgrid[0:s, 0:s]
     brightness = RNG.uniform(-18, 18)        # per-sample intensity shift
-    noise = {"Allaple_A": 22, "Autorun_K": 26, "C2LOP_P": 24,
-             "Yuner_A": 20}[family]
+    noise = {"Allaple_A": 22, "C2LOP_P": 24, "Lolyda_AA2": 26,
+             "Alueron_genJ": 18}[family]
 
     if family == "Allaple_A":
         img = RNG.integers(0, 256, (s, s)).astype(float)
         img += 60 * np.sin(2 * np.pi * yy / 6.0)          # faint bands
-    elif family == "Autorun_K":
-        img = 90 + 70 * np.sin(2 * np.pi * xx / 4.5)      # vertical stripes
     elif family == "C2LOP_P":
         img = np.full((s, s), 35.0)
         for _ in range(RNG.integers(5, 9)):               # random blocks
             y0, x0 = RNG.integers(0, s - 14, 2)
             h, w = RNG.integers(8, 15), RNG.integers(8, 15)
             img[y0:y0 + h, x0:x0 + w] = RNG.uniform(150, 255)
-    else:  # Yuner_A
-        img = 40 + 170 * (xx + yy) / (2.0 * s)            # smooth gradient
+    elif family == "Lolyda_AA2":
+        img = np.full((s, s), 40.0)                       # small tiles
+        for _ in range(RNG.integers(30, 45)):
+            y0, x0 = RNG.integers(0, s - 5, 2)
+            img[y0:y0 + 4, x0:x0 + 4] = RNG.uniform(160, 255)
+    else:  # Alueron_genJ
+        img = 90 + 70 * np.sin(2 * np.pi * xx / 4.0) * \
+            np.sin(2 * np.pi * yy / 4.0)                  # fine mesh
     img += RNG.normal(0, noise, (s, s))
     img += brightness
     # random occlusions (packing/obfuscation artefacts)
@@ -459,27 +648,61 @@ def download_threat_feed() -> pd.DataFrame:
 # Stage runner
 # =======================================================================
 def run(save_doc: bool = True) -> dict:
-    """Execute the full data-collection stage."""
+    """Execute the full data-collection stage.
+
+    Real datasets (CICIDS2017 flows + Malimg images) are used whenever they
+    can be downloaded; the documented synthetic generators kick in as the
+    offline fallback, so the pipeline always completes.
+    """
     with StageTimer(2, "Data Collection"):
         config.ensure_dirs()
-        flows_path = generate_network_flows()
+
+        # ---- network flows: REAL CICIDS2017, fallback = generated -------
+        flows_real = False
+        try:
+            flows_df = load_real_network_flows()
+            flows_path = os.path.join(config.RAW_DIR, "network_flows.csv")
+            flows_real = True
+        except Exception as exc:
+            print(f"    [warn] real flows unavailable ({exc}) -> "
+                  f"falling back to documented synthetic generator")
+            flows_path = generate_network_flows()
+
         sms_df = load_sms_dataset()
-        imgs_path = generate_malware_images()
+
+        # ---- malware images: REAL Malimg, fallback = generated -----------
+        imgs_real = False
+        try:
+            imgs_path = load_real_malware_images()
+            imgs_real = True
+        except Exception as exc:
+            print(f"    [warn] real Malimg unavailable ({exc}) -> "
+                  f"falling back to documented synthetic generator")
+            imgs_path = generate_malware_images()
+
         feed_df = download_threat_feed()
 
+        n_imgs = sum(len(os.listdir(os.path.join(imgs_path, f)))
+                     for f in config.MALWARE_FAMILIES)
         doc = {
             "network_flows": {
                 "path": os.path.relpath(flows_path, config.ROOT),
                 "rows": int(pd.read_csv(flows_path).shape[0]),
-                "source": "Generated (seeded statistical models per class, "
-                          "distributions documented in src/data_collection.py)",
+                "source": (
+                    "REAL - CICIDS2017 (Canadian Institute for "
+                    "Cybersecurity), 5 days of captured traffic mapped to "
+                    "the 16-feature schema (see src/data_collection.py)"
+                    if flows_real else
+                    "Generated (seeded statistical models per class, "
+                    "distributions documented in src/data_collection.py)"),
                 "classes": config.FLOW_CLASSES,
                 "features": 16,
-                "imperfections_injected": {
-                    "duplicate_rows": config.DUPLICATE_RATE,
-                    "missing_values": config.MISSING_RATE,
-                    "negative_glitches": 0.003,
-                },
+                "imperfections_injected": (
+                    None if flows_real else {
+                        "duplicate_rows": config.DUPLICATE_RATE,
+                        "missing_values": config.MISSING_RATE,
+                        "negative_glitches": 0.003,
+                    }),
             },
             "sms_spam": {
                 "path": os.path.relpath(config.SMS_CSV, config.ROOT),
@@ -491,10 +714,13 @@ def run(save_doc: bool = True) -> dict:
             },
             "malware_images": {
                 "path": os.path.relpath(imgs_path, config.ROOT),
-                "rows": int(config.MALWARE_PER_FAMILY *
-                            len(config.MALWARE_FAMILIES)),
-                "source": "Generated byte-plot visualizations inspired by "
-                          "Nataraj et al. (2011) malware imaging",
+                "rows": int(n_imgs),
+                "source": (
+                    "REAL - Malimg corpus (Nataraj et al. 2011), 4 families "
+                    "resized to 48x48 byte-plots"
+                    if imgs_real else
+                    "Generated byte-plot visualizations inspired by "
+                    "Nataraj et al. (2011) malware imaging"),
                 "classes": config.MALWARE_FAMILIES,
                 "image_size": f"{config.MALWARE_IMG_SIZE}x"
                               f"{config.MALWARE_IMG_SIZE} grayscale",

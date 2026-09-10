@@ -1,38 +1,38 @@
 {
   "kmeans": {
-    "chosen_k": 4,
-    "ARI": 0.4627558418749302,
-    "NMI": 0.6604867704660634,
-    "purity": 0.7666333666333667,
-    "silhouette": 0.4817811316367162
+    "chosen_k": 2,
+    "ARI": 0.0666782592527017,
+    "NMI": 0.13261718210934162,
+    "purity": 0.46293727847125904,
+    "silhouette": 0.9717241647614037
   },
   "dbscan": {
-    "clusters_found": 2,
-    "noise_ratio": 0.0,
+    "clusters_found": 1,
+    "noise_ratio": 0.0045,
     "eps": 1.2,
     "min_samples": 10,
     "note": "run on a 3-D PCA subsample (density estimation in 12-D is expensive)"
   },
   "hierarchical": {
     "method": "Ward linkage, AgglomerativeClustering, 8-D PCA subsample (2,500 flows)",
-    "n_clusters": 4,
-    "ARI": 0.4735462043923272,
-    "NMI": 0.6651132420025168,
+    "n_clusters": 2,
+    "ARI": 0.09369670928439695,
+    "NMI": 0.15161827885860427,
     "dendrogram": "results/figures/unsup_dendrogram.png"
   },
   "isolation_forest": {
-    "precision": 0.9478357380688124,
-    "recall": 0.6137261947538627,
-    "f1": 0.7450381679389313,
-    "benign_false_alarm_rate": 0.0423042304230423,
-    "threshold": 0.011107082833552103,
+    "precision": 0.8830525272547076,
+    "recall": 0.2413326110509209,
+    "f1": 0.37906828334396936,
+    "benign_false_alarm_rate": 0.042188058634250986,
+    "threshold": 0.02285466162585904,
     "training": "benign flows only (one-class)",
     "per_class_detection": {
-      "Benign": 0.0423042304230423,
-      "Botnet": 0.0,
+      "Benign": 0.042188058634250986,
+      "Botnet": 0.1297709923664122,
       "BruteForce": 0.0,
-      "DDoS": 1.0,
-      "PortScan": 0.9323607427055703
+      "DDoS": 0.6046705587989991,
+      "PortScan": 0.10454545454545454
     }
   },
   "supervised_vs_unsupervised": {

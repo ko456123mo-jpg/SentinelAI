@@ -69,11 +69,64 @@ DUPLICATE_RATE = 0.008             # injected duplicate rows
 SMS_RAW_FILE = os.path.join(RAW_DIR, "SMSSpamCollection")
 SMS_CSV = os.path.join(RAW_DIR, "sms_spam.csv")
 
-# ---- 3.3 Synthetic malware visualization images (generated) ----
-MALWARE_FAMILIES = ["Allaple_A", "Autorun_K", "C2LOP_P", "Yuner_A"]
+# ---- 3.3 Malware byte-plot images (REAL Malimg corpus preferred) ----
+# The four families are taken from the Malimg dataset (Nataraj et al. 2011)
+# so real byte-plots are used when the corpus can be fetched; a documented
+# synthetic generator remains as the offline fallback.
+# NOTE: Allaple.A and C2LOP.P were paired with Lolyda.AA2 and Alueron.gen!J
+# because the figshare Malimg mirror's Autorun.K/Yuner.A folders contain
+# duplicated (pixel-identical) images that cannot be classified honestly.
+MALWARE_FAMILIES = ["Allaple_A", "C2LOP_P", "Lolyda_AA2", "Alueron_genJ"]
 MALWARE_IMG_DIR = os.path.join(RAW_DIR, "malware_images")
-MALWARE_IMG_SIZE = 48               # 48 x 48 grayscale
-MALWARE_PER_FAMILY = 180            # 180 * 4 families = 720 images
+MALWARE_IMG_SIZE = 48               # 48 x 48 grayscale (CNN input)
+MALWARE_PER_FAMILY = 180            # synthetic fallback: 180 * 4 = 720 images
+
+
+# ----------------------------------------------------------------------
+# 3.4 REAL dataset sources (auto-downloaded; generated data = fallback)
+# ----------------------------------------------------------------------
+# Network flows  -> CICIDS2017 (Canadian Institute for Cybersecurity),
+#                   full 85-column CSV as parquet, hosted on Hugging Face.
+CICIDS2017_PARQUET_BASE = (
+    "https://huggingface.co/datasets/bvsam/cic-ids-2017/resolve/main/"
+    "traffic_labels/")
+CICIDS2017_FILES = [
+    "Tuesday-WorkingHours.pcap_ISCX.csv.parquet",      # FTP/SSH-Patator + BENIGN
+    "Wednesday-workingHours.pcap_ISCX.csv.parquet",    # DoS/DDoS floods + BENIGN
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv.parquet",   # DDoS LOIC
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv.parquet",
+    "Friday-WorkingHours-Morning.pcap_ISCX.csv.parquet",          # Bot + BENIGN
+]
+CICIDS_CACHE_DIR = os.path.join(RAW_DIR, "cicids_cache")   # gitignored
+
+# Malware images -> Malimg corpus (Nataraj et al. 2011) via figshare mirror.
+MALIMG_URL = "https://ndownloader.figshare.com/files/42443904"
+MALIMG_ZIP = os.path.join(RAW_DIR, "malimg.zip")            # gitignored
+
+# CICIDS2017 raw label -> SentinelAI class (DoS/DDoS floods collapse into DDoS,
+# the two Patator families are password-guessing -> BruteForce).
+CICIDS_LABEL_MAP = {
+    "BENIGN": "Benign",
+    "DDoS": "DDoS", "DoS Hulk": "DDoS", "DoS GoldenEye": "DDoS",
+    "DoS slowloris": "DDoS", "DoS Slowhttptest": "DDoS",
+    "PortScan": "PortScan",
+    "FTP-Patator": "BruteForce", "SSH-Patator": "BruteForce",
+    "Bot": "Botnet",
+}
+# Per-class sampling caps (keeps the dataset tractable and honest about the
+# real CICIDS2017 class imbalance; Bot has only 1,966 flows in total).
+REAL_FLOW_CAP = {"Benign": 14000, "DDoS": 6000, "PortScan": 5500,
+                 "BruteForce": 5000, "Botnet": 1966}
+
+# Malimg folder name -> project family name.
+MALIMG_FAMILY_MAP = {"Allaple.A": "Allaple_A", "C2LOP.P": "C2LOP_P",
+                     "Lolyda.AA2": "Lolyda_AA2",
+                     "Alueron.gen!J": "Alueron_genJ"}
+# Per-family caps for the real corpus: every Malimg image (train+validation,
+# both mirrors) is pooled and capped so the four classes stay balanced
+# (C2LOP.P is kept whole at 171 images).
+REAL_MALWARE_CAP = {"Allaple_A": 200, "C2LOP_P": 171, "Lolyda_AA2": 200,
+                    "Alueron_genJ": 200}
 
 # ----------------------------------------------------------------------
 # 4. Shared ML constants

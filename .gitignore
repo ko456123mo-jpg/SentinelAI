@@ -5,3 +5,7 @@ __pycache__/
 *.zip
 .venv/
 venv/
+
+# large auto-downloaded dataset caches (re-fetched on demand)
+data/raw/cicids_cache/
+data/raw/malimg.zip

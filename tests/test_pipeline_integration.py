@@ -43,16 +43,18 @@ class TestTrainedPipeline(unittest.TestCase):
         self.assertIn(incident["response_action"], config.RL_ACTIONS)
 
     def test_agent_catches_obvious_ddos(self):
-        """A hand-crafted SYN-flood flow must be classified as an attack."""
+        """A hand-crafted flow matching the REAL CICIDS2017 DDoS (LOIC)
+        signature - a long-lived HTTP flood on port 80 with large
+        packet-size variance - must be classified as DDoS and escalated."""
         from src.agent import SentinelAgent
         agent = SentinelAgent().load()
         incident = agent.analyze_flow({
-            "duration": 5.0, "protocol": "TCP", "src_port": 50000,
-            "dst_port": 80, "src_bytes": 60.0, "dst_bytes": 0.0,
-            "src_pkts": 3000, "dst_pkts": 0, "syn_rate": 0.99,
-            "ack_rate": 0.01, "psh_rate": 0.0, "avg_pkt_size": 60.0,
-            "byte_std": 8.0, "flow_iat_mean": 0.1,
-            "active_duration": 4.0, "is_land": 0, "criticality": 1,
+            "duration": 100.0, "protocol": "TCP", "src_port": 46707,
+            "dst_port": 80, "src_bytes": 336.0, "dst_bytes": 11595.0,
+            "src_pkts": 6, "dst_pkts": 6, "syn_rate": 0.0,
+            "ack_rate": 0.07, "psh_rate": 0.0, "avg_pkt_size": 852.0,
+            "byte_std": 1497.0, "flow_iat_mean": 6.6,
+            "active_duration": 0.0, "is_land": 0, "criticality": 1,
         })
         self.assertEqual(incident["prediction"], "DDoS")
         self.assertIn(incident["response_action"],

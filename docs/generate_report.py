@@ -28,7 +28,7 @@ STUDENT_NAME = "Mohammed Moneer Al-absi"
 STUDENT_ID = "2023050086"
 SECTION = "Cybersecurity (CS)"
 SUPERVISOR = "Eng. Sondos Saif"
-DATE = "2026"
+DATE = "10 September 2026"
 
 ACCENT = RGBColor(0x1F, 0x4E, 0x79)
 
@@ -135,8 +135,9 @@ def build():
     p.add_run(
         "«سينتينل آي آي» مساعد أمني ذكي متكامل يكشف الهجمات في تدفقات "
         "الشبكة والرسائل التصيّدية وعائلات البرمجيات الخبيزة، ثم يقرر "
-        "الاستجابة تلقائياً. جُمّعت البيانات من مصدر حقيقي عام (UCI) "
-        "ومولّدات موثّقة، وعولجت (تنظيف، ترميز، تحجيم، اختيار سمات)، "
+        "الاستجابة تلقائياً. جُمّعت البيانات من مصادر حقيقية (حركة شبكة "
+        "CICIDS2017 الملتقطة، وصور Malimg، ورسائل UCI، وتغذية تهديدات "
+        "حيّة)، وعولجت (تنظيف، ترميز، تحجيم، اختيار سمات)، "
         "ودُرّبت ستة نماذج خاضعة للإشراف (أفضلها Random Forest بدقة "
         f"{pct(bm['accuracy'])})، مع تحليل غير خاضع للإشراف (K-Means و"
         "Isolation Forest) وتعلم عميق (MLP وCNN) ومعالجة لغة طبيعية، "
@@ -175,49 +176,59 @@ def build():
 
     # ================= 4. DATASET =================
     doc.add_heading("4. Dataset", 1)
+    flow_src = ds["network_flows"]["source"]
+    img_src = ds["malware_images"]["source"]
     table(doc, ["Dataset", "Type", "Records", "Classes", "Source"], [
         ["Network flows", "tabular, 16 features",
-         f"{pre['rows_raw']:,} (raw)", "5 (Benign 45%, DDoS 20%, PortScan "
-         "15%, BruteForce 12%, Botnet 8%)",
-         "Generated - seeded statistical models, documented"],
+         f"{pre['rows_raw']:,} (raw)", "5 (Benign, DDoS, PortScan, "
+         "BruteForce, Botnet)",
+         flow_src],
         ["SMS Spam (NLP)", "text",
          f"{ds['sms_spam']['rows']:,}", "ham 86.6% / spam 13.4%",
-         "REAL - UCI ML Repository (Almeida & Hidalgo)"],
+         ds["sms_spam"]["source"]],
         ["Malware images (CV)", "48x48 grayscale byte-plots",
          f"{ds['malware_images']['rows']}", "4 families",
-         "Generated - Nataraj et al. (2011) approach"],
+         img_src],
         ["Threat-intel feed", "domain blocklist",
          f"{ds['threat_feed']['rows']:,} domains", "malicious / clean",
-         "REAL - downloaded over HTTP (web/network programming): "
-         "stamparm/blackbook public feed"],
+         ds["threat_feed"]["source"]],
     ])
     doc.add_paragraph(
         "Data types: numeric (14 flow features), categorical (protocol), "
-        "free text, and images. The flows dataset is intentionally "
-        "imbalanced and contains overlapping 'hard' benign behaviours "
-        "(IT/SSH work, beacon apps, monitoring probes, flash crowds) so "
-        "that realistic false positives/negatives exist to discuss.")
+        "free text, and images. The flows dataset keeps the real CICIDS2017 "
+        "class imbalance (Botnet is naturally rare) so the models are "
+        "evaluated on a realistic distribution; the synthetic generators "
+        "shipped with the project only serve as a documented offline "
+        "fallback.")
 
     # ================= 5. DATA COLLECTION =================
     doc.add_heading("5. Data Collection", 1)
     bullets(doc, [
-        "Network flows: generated with class-specific statistical models "
-        "(log-normal sizes, Beta rates, family-typical ports) in "
-        "src/data_collection.py - reproducible with a fixed seed; using "
-        "generated data is explicitly allowed by the project outline.",
-        "Realistic imperfections were injected on purpose: ~0.8% duplicate "
-        "rows, ~1.5% missing values in byte_std / flow_iat_mean, 0.3% "
-        "impossible negative values.",
+        "Network flows: REAL captured traffic from CICIDS2017 (Canadian "
+        "Institute for Cybersecurity). Five days of PCAP-derived flows "
+        "(Tuesday brute force, Wednesday DoS/DDoS, Friday DDoS/PortScan/Bot) "
+        "are downloaded as parquet and mapped to the 16-feature schema "
+        "(Flow Duration -> duration, Protocol -> protocol, packet lengths "
+        "-> byte counters, flag counts -> rates, source/destination "
+        "equality -> is_land). Labels are remapped: BENIGN->Benign, "
+        "DoS*/DDoS->DDoS, PortScan->PortScan, FTP/SSH-Patator->BruteForce, "
+        "Bot->Botnet (the 11 Heartbleed rows are dropped as out of scope). "
+        "A per-class sampling cap keeps the natural imbalance while keeping "
+        "training tractable.",
+        "Malware images: the REAL Malimg corpus (Nataraj et al. 2011) — the "
+        "four families Allaple.A, C2LOP.P, Lolyda.AA2 and Alueron.gen!J are "
+        "extracted as grayscale byte-plots and resized to 48x48 (the CNN "
+        "input), preserving real visual malware signatures.",
         "Spam texts: downloaded from the UCI ML Repository (public, "
         "legitimate academic dataset).",
-        "Malware images: each 'binary' is rendered as a grayscale byte-plot "
-        "with per-family visual signatures plus noise, brightness shift and "
-        "occlusion artefacts.",
         "Threat-intelligence feed: a real public malware-domain blocklist "
         "(stamparm/blackbook, 18,000+ domains) is downloaded over HTTPS at "
         "collection time - demonstrating web/network programming - and is "
         "used by the agent for IOC enrichment (with a documented offline "
-        "fallback list)."])
+        "fallback list).",
+        "Offline fallback: if the real corpora cannot be downloaded, the "
+        "pipeline transparently uses documented synthetic generators and "
+        "records the actual source in dataset_documentation.json."])
 
     # ================= 6. PREPROCESSING =================
     doc.add_heading("6. Data Preprocessing", 1)
@@ -424,15 +435,14 @@ def build():
     doc.add_paragraph(
         f"CNN accuracy {pct(cv['metrics']['accuracy'])}, macro-F1 "
         f"{pct(cv['metrics']['f1_macro'])} on {cv['test_images']} unseen "
-        f"images. Traditional-ML baseline (HOG texture features + RBF SVM) "
-        f"reaches {pct(cv['hog_svm_baseline']['accuracy'])} on the same "
-        f"split - with such visually distinct family signatures both "
-        f"approaches saturate the task; the CNN would pull ahead on real "
-        f"corpora with subtler differences (documented honestly). "
+        f"REAL Malimg byte-plots (four families: Allaple.A, C2LOP.P, "
+        f"Lolyda.AA2, Alueron.gen!J). The traditional-ML baseline (HOG "
+        f"texture features + RBF SVM) reaches "
+        f"{pct(cv['hog_svm_baseline']['accuracy'])} on the same split. "
         f"Per-family recall: " + ", ".join(
             f"{k.split('_')[0]} {pct(v['recall'])}" for k, v in
             cv["classification_report"].items() if k in
-            ("Allaple_A", "Autorun_K", "C2LOP_P", "Yuner_A")) + ".")
+            ("Allaple_A", "C2LOP_P", "Lolyda_AA2", "Alueron_genJ")) + ".")
     add_fig(doc, "cv_cnn_vs_hog.png",
             "Figure - CNN vs traditional ML (HOG+SVM) for malware images.",
             4.6)
@@ -480,8 +490,9 @@ def build():
     # ================= 11. FUTURE WORK =================
     doc.add_heading("11. Future Work and Recommendations", 1)
     bullets(doc, [
-        "Train on real captured traffic (e.g. CICIDS2017) and real malware "
-        "image corpora (Malimg) to validate against fully real data",
+        "Scale to the full CICIDS2017 corpus (2.8M flows) and all 25 "
+        "Malimg families - the pipeline already maps to the schema, only "
+        "the sampling caps need lifting",
         "Deep learning for text (LSTM/transformer embeddings) to lift spam "
         "recall beyond the TF-IDF baseline",
         "Explainability: SHAP values per decision for analyst-facing "
@@ -510,6 +521,9 @@ def build():
     # ================= 13. REFERENCES =================
     doc.add_heading("13. References", 1)
     refs = [
+        "Sharafaldin, I., Habibi Lashkari, A., Ghorbani, A. (2018) - Toward "
+        "Generating a New Intrusion Detection Dataset and Intrusion Traffic "
+        "Characterization (CICIDS2017). Canadian Institute for Cybersecurity.",
         "Almeida, T., Hidalgo, J., Yamakami, A. - Contributions to the "
         "Study of SMS Spam Filtering. UCI ML Repository (SMS Spam "
         "Collection).",

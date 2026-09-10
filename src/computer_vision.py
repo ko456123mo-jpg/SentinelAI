@@ -40,14 +40,19 @@ IMG = config.MALWARE_IMG_SIZE
 
 
 def load_images():
-    """Load every PNG byte-plot + its family label."""
+    """Load every PNG byte-plot + its family label.
+
+    Real Malimg images arrive at their native size (e.g. 256x264 or
+    768x683), so each is converted to grayscale and RESIZED to 48x48 to
+    match the CNN input - the standard fixed-size normalization of the
+    byte-plot approach (Nataraj et al. 2011)."""
     X, y, paths = [], [], []
     for idx, fam in enumerate(config.MALWARE_FAMILIES):
         fam_dir = os.path.join(config.MALWARE_IMG_DIR, fam)
         for fname in sorted(os.listdir(fam_dir)):
             p = os.path.join(fam_dir, fname)
-            X.append(np.asarray(Image.open(p).convert("L"), dtype=np.float32)
-                     / 255.0)                      # normalize to [0,1]
+            im = Image.open(p).convert("L").resize((IMG, IMG))
+            X.append(np.asarray(im, dtype=np.float32) / 255.0)  # -> [0,1]
             y.append(idx)
             paths.append(p)
     return np.stack(X)[..., None], np.array(y), paths
@@ -182,18 +187,22 @@ def run() -> dict:
         # persist artifacts for the agent ---------------------------------
         joblib.dump({"families": families},
                     os.path.join(config.MODEL_DIR, "cv_label_map.joblib"))
-        os.makedirs(os.path.join(config.TEST_DIR, "malware"),
-                    exist_ok=True)
+        test_mal_dir = os.path.join(config.TEST_DIR, "malware")
+        os.makedirs(test_mal_dir, exist_ok=True)
+        for old in os.listdir(test_mal_dir):         # clear stale held-outs
+            os.remove(os.path.join(test_mal_dir, old))
         chosen = np.random.RandomState(config.SEED).choice(
             len(p_te), 8, replace=False)
         for i in chosen:
             os.replace(p_te[i], os.path.join(
-                config.TEST_DIR, "malware", os.path.basename(p_te[i])))
+                test_mal_dir, os.path.basename(p_te[i])))
 
         summary = {
             "approach": "byte-plot malware visualization + CNN "
                         "(Nataraj et al. 2011)",
-            "image_preprocessing": ["48x48 grayscale PNG",
+            "image_preprocessing": ["grayscale conversion",
+                                    "resize to 48x48 (native Malimg sizes "
+                                    "vary, e.g. 256x264 - 768x683)",
                                     "normalize pixels to [0,1]",
                                     "stratified 80/20 split",
                                     "sparse integer labels"],

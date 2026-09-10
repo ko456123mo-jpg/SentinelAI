@@ -1,13 +1,13 @@
 {
   "n_events": 27,
-  "high_risk": 8,
-  "disagreements": 1,
+  "high_risk": 15,
+  "disagreements": 0,
   "ioc_events": 1,
   "by_action": {
-    "Monitor": 14,
-    "Isolate_Host": 7,
-    "Alert_Analyst": 4,
-    "Block_IP": 2
+    "Isolate_Host": 11,
+    "Monitor": 7,
+    "Alert_Analyst": 6,
+    "Block_IP": 3
   },
   "flow_accuracy": 1.0,
   "workflow": [

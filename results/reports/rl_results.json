@@ -30,7 +30,7 @@
     "AlwaysMonitor": -3.667,
     "AlwaysBlock": 1.0,
     "Random": -0.45,
-    "Q-Learning policy": 2.333
+    "Q-Learning policy": 2.444
   },
   "how_it_learns": "The agent tries actions at random first; every action returns a reward from the SOC cost model. The Q-update strengthens state-action pairs that earned high long-term reward, so successful response strategies emerge purely from reward feedback."
 }

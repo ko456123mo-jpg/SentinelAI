@@ -1,7 +1,7 @@
 """
 SentinelAI - Stage 8: NLP - Spam / Phishing Text Detection
 ==========================================================
-Real dataset: UCI SMS Spam Collection (5,574 real messages).
+Real dataset: UCI SMS Spam Collection (5,572 real messages).
 
 Text preprocessing pipeline (documented as required):
     1. lowercase                     models treat "FREE" and "free" equally
@@ -244,7 +244,7 @@ def run() -> dict:
             index=False)
 
         summary = {
-            "dataset": "UCI SMS Spam Collection (real, 5,574 messages)",
+            "dataset": "UCI SMS Spam Collection (real, 5,572 messages)",
             "preprocessing_pipeline": ["lowercase", "URL/EMAIL/NUM masking",
                                        "punctuation removal",
                                        "NLTK stop-word removal",

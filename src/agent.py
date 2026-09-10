@@ -234,8 +234,9 @@ class SentinelAgent:
     # ------------------------------------------------------------------
     def analyze_image(self, path: str) -> dict:
         from PIL import Image
-        img = (np.asarray(Image.open(path).convert("L"),
-                          dtype=np.float32) / 255.0)[..., None]
+        img = np.asarray(Image.open(path).convert("L").resize(
+            (config.MALWARE_IMG_SIZE, config.MALWARE_IMG_SIZE)),
+            dtype=np.float32)[..., None] / 255.0
         proba = self.artifacts["cnn"].predict(img[None, ...], verbose=0)[0]
         idx = int(np.argmax(proba))
         label = self.artifacts["families"][idx]

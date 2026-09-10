@@ -79,7 +79,7 @@ def build():
     sub.text = ("Unified Threat Detection & Response Platform\n"
                 "Mohammed Moneer Al-absi  |  ID: 2023050086  |  "
                 "Section: Cybersecurity (CS)\n"
-                "Supervisor: Eng. Sondos Saif")
+                "Supervisor: Eng. Sondos Saif  |  Date: 10 September 2026")
     s.notes_slide.notes_text_frame.text = (
         "Opening: one system - three engines (flows, texts, files) + "
         "anomaly detection + a learned response policy + an agent.")
@@ -94,7 +94,8 @@ def build():
         notes="Why it matters + who uses it (analysts, network & mail ops).")
 
     slide(prs, "System at a Glance (Level 3 - Expert)", [
-        "Supervised: 6 classifiers on 25k network flows",
+        f"Supervised: 6 classifiers on {pre['rows_clean']:,} real "
+        "network flows",
         f"Unsupervised: K-Means + DBSCAN + Isolation Forest",
         "Deep Learning: MLP compared vs classic ML",
         "NLP: spam/phishing on REAL UCI data (5,572 msgs)",
@@ -103,19 +104,19 @@ def build():
         "AI Agent: routing + risk fusion + decisions + reports"],
         notes="All mandatory + all advanced components in one pipeline.")
 
-    slide(prs, "Data Collection (Stage 2)", [
-        "Network flows: 25,200 rows, 16 features, 5 classes (imbalanced)",
-        "Generated with documented per-class statistical models (seeded, "
-        "reproducible)",
-        "Imperfections injected on purpose: duplicates, missing values, "
-        "impossible values",
+    slide(prs, "Data Collection (Stage 2) - REAL datasets", [
+        f"Network flows: {pre['rows_raw']:,} REAL CICIDS2017 captured "
+        "flows, mapped to 16 features, 5 classes (imbalanced)",
+        "Malware images: REAL Malimg corpus - Allaple.A, C2LOP.P, "
+        "Lolyda.AA2, Alueron.gen!J resized to 48x48",
         "Spam texts: REAL - UCI SMS Spam Collection (5,572 messages)",
-        "Malware images: 720 byte-plots, 4 families (Nataraj 2011 style)",
         "Threat-intel feed: REAL - 18k+ malware domains downloaded over "
-        "HTTPS (web/network programming)"],
+        "HTTPS (web/network programming)",
+        "Offline fallback: documented synthetic generators"],
         image="eda_class_distribution.png",
-        notes="Defensible source story: 2 real sources + documented "
-              "generated data + live feed download.")
+        notes="Defensible source story: 4 real sources (captured traffic, "
+              "real malware corpus, public SMS data, live feed) + "
+              "documented offline fallback.")
 
     slide(prs, "Preprocessing (Stage 3) - every step justified", [
         f"Removed {pre['duplicates_removed']} duplicates (bias removal)",
@@ -193,7 +194,8 @@ def build():
         f"{cv['test_images']} unseen images",
         f"Traditional baseline (HOG+SVM): {pct(cv['hog_svm_baseline']['accuracy'])} "
         "- both saturate this task; CNN scales better on real corpora",
-        "Noise/brightness/occlusion injected -> model must generalize"],
+        "REAL Malimg byte-plots (native sizes 256x264 - 768x683, "
+        "resized on load)"],
         image="cv_cnn_vs_hog.png")
 
     slide(prs, "Reinforcement Learning (Stage 10)", [
@@ -239,10 +241,11 @@ def build():
         f"Isolation Forest: precision {pct(uns['isolation_forest']['precision'])}",
         f"RL policy beats all baselines "
         f"({rl['baseline_comparison']['Q-Learning policy']:.2f} avg reward)",
-        "15/15 automated tests pass; full reproducible pipeline"])
+        "21/21 automated tests pass; full reproducible pipeline"])
 
     slide(prs, "Future Work", [
-        "Real captured traffic (CICIDS2017) + real Malimg corpus",
+        "Scale to the full CICIDS2017 corpus (2.8M flows) and all 25 "
+        "Malimg families",
         "LSTM / transformer text models for higher spam recall",
         "SHAP explainability for every agent decision",
         "Continual learning for evolving 'normal'",

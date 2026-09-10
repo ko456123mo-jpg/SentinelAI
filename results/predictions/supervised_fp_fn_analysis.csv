@@ -1,6 +1,6 @@
 class,FP,FN,FP_rate,FN_rate
-Benign,6,6,0.0027,0.0027
-Botnet,5,1,0.0121,0.0024
-BruteForce,1,5,0.0016,0.0081
-DDoS,0,0,0.0,0.0
-PortScan,0,0,0.0,0.0
+Benign,11,11,0.0039,0.0039
+Botnet,0,3,0.0,0.0076
+BruteForce,2,1,0.002,0.001
+DDoS,11,7,0.0091,0.0058
+PortScan,0,2,0.0,0.0018
