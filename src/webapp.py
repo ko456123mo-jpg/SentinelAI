@@ -667,7 +667,7 @@ function tbl(head,rows){return "<table><tr>"+head.map(h=>"<th>"+h+
  "</th>").join("")+"</tr>"+rows.map(r=>"<tr>"+r.map(c=>"<td>"+c+"</td>")
  .join("")+"</tr>").join("")+"</table>";}
 function figs(list){return '<div class="figrow">'+list.map(([f,c])=>
- '<div><img src="/api/figure/'+f+'" loading="lazy"><div class="cap">'+c+
+ '<div><img src="/api/figure/'+f+'.png" loading="eager"><div class="cap">'+c+
  '</div></div>').join("")+'</div>';}
 function kv(items){return '<div class="kv">'+items.map(([k,v])=>
  '<div class="item"><div class="k">'+k+'</div><div class="v">'+v+
@@ -994,7 +994,7 @@ function loadFigs(cat){
  ')</button>').join("");
  const show=fs.filter(f=>!cat||f.startsWith(cat+"_"));
  $("figs").innerHTML=show.map(f=>'<div><img src="/api/figure/'+f+
- '" loading="lazy"><div class="cap">'+f.replace(".png","")+'</div></div>')
+ '" loading="eager"><div class="cap">'+f.replace(".png","")+'</div></div>')
  .join("")||"<i>no figures yet</i>";});}
 
 /* ---------- system ---------- */
