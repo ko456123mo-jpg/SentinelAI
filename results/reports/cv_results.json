@@ -13,8 +13,8 @@
   "train_images": 616,
   "test_images": 155,
   "metrics": {
-    "accuracy": 1.0,
-    "f1_macro": 1.0
+    "accuracy": 0.9935483870967742,
+    "f1_macro": 0.9937490232848882
   },
   "hog_svm_baseline": {
     "accuracy": 1.0,
@@ -24,9 +24,9 @@
   },
   "classification_report": {
     "Allaple_A": {
-      "precision": 1.0,
+      "precision": 0.975609756097561,
       "recall": 1.0,
-      "f1-score": 1.0,
+      "f1-score": 0.9876543209876543,
       "support": 40.0
     },
     "C2LOP_P": {
@@ -43,21 +43,21 @@
     },
     "Alueron_genJ": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
+      "recall": 0.975,
+      "f1-score": 0.9873417721518988,
       "support": 40.0
     },
-    "accuracy": 1.0,
+    "accuracy": 0.9935483870967742,
     "macro avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
+      "precision": 0.9939024390243902,
+      "recall": 0.99375,
+      "f1-score": 0.9937490232848882,
       "support": 155.0
     },
     "weighted avg": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
+      "precision": 0.9937057435090481,
+      "recall": 0.9935483870967742,
+      "f1-score": 0.9935473788747234,
       "support": 155.0
     }
   }

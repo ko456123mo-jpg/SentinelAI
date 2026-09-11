@@ -4,10 +4,9 @@
   "disagreements": 0,
   "ioc_events": 1,
   "by_action": {
-    "Isolate_Host": 11,
+    "Block_IP": 16,
     "Monitor": 7,
-    "Alert_Analyst": 6,
-    "Block_IP": 3
+    "Isolate_Host": 4
   },
   "flow_accuracy": 1.0,
   "workflow": [

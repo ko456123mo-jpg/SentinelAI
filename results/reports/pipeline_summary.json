@@ -1,5 +1,5 @@
 {
-  "total_runtime_sec": 199.1,
+  "total_runtime_sec": 22.1,
   "preprocess": {
     "rows_raw": 32466,
     "justifications": {
@@ -431,10 +431,10 @@
         "f1": 0.9003690036900369
       },
       "LSTM(Keras)": {
-        "accuracy": 0.9856502242152466,
-        "precision": 0.9854014598540146,
-        "recall": 0.9060402684563759,
-        "f1": 0.9440559440559441
+        "accuracy": 0.9847533632286996,
+        "precision": 0.9925373134328358,
+        "recall": 0.8926174496644296,
+        "f1": 0.9399293286219081
       }
     },
     "best_model": "LSTM(Keras)",
@@ -524,8 +524,8 @@
     "train_images": 616,
     "test_images": 155,
     "metrics": {
-      "accuracy": 1.0,
-      "f1_macro": 1.0
+      "accuracy": 0.9935483870967742,
+      "f1_macro": 0.9937490232848882
     },
     "hog_svm_baseline": {
       "accuracy": 1.0,
@@ -535,9 +535,9 @@
     },
     "classification_report": {
       "Allaple_A": {
-        "precision": 1.0,
+        "precision": 0.975609756097561,
         "recall": 1.0,
-        "f1-score": 1.0,
+        "f1-score": 0.9876543209876543,
         "support": 40.0
       },
       "C2LOP_P": {
@@ -554,21 +554,21 @@
       },
       "Alueron_genJ": {
         "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
+        "recall": 0.975,
+        "f1-score": 0.9873417721518988,
         "support": 40.0
       },
-      "accuracy": 1.0,
+      "accuracy": 0.9935483870967742,
       "macro avg": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
+        "precision": 0.9939024390243902,
+        "recall": 0.99375,
+        "f1-score": 0.9937490232848882,
         "support": 155.0
       },
       "weighted avg": {
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1-score": 1.0,
+        "precision": 0.9937057435090481,
+        "recall": 0.9935483870967742,
+        "f1-score": 0.9935473788747234,
         "support": 155.0
       }
     }
@@ -605,7 +605,7 @@
       "AlwaysMonitor": -3.667,
       "AlwaysBlock": 1.0,
       "Random": -0.45,
-      "Q-Learning policy": 2.444
+      "Q-Learning policy": 2.5
     },
     "how_it_learns": "The agent tries actions at random first; every action returns a reward from the SOC cost model. The Q-update strengthens state-action pairs that earned high long-term reward, so successful response strategies emerge purely from reward feedback."
   },
@@ -615,10 +615,9 @@
     "disagreements": 0,
     "ioc_events": 1,
     "by_action": {
-      "Isolate_Host": 11,
+      "Block_IP": 16,
       "Monitor": 7,
-      "Alert_Analyst": 6,
-      "Block_IP": 3
+      "Isolate_Host": 4
     },
     "flow_accuracy": 1.0,
     "workflow": [
