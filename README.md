@@ -37,6 +37,10 @@ cd SentinelAI
 bash run_kali.sh     # finds/creates the environment, installs, starts the console
 ```
 
+> ⚠️ **Kali 2025.2+ ships Python 3.14**, which TensorFlow does not support yet.
+> `run_kali.sh` will detect this and print the fix — or see the full
+> step-by-step guide: **`docs/KALI_SETUP_AR.md`** (Arabic, incl. troubleshooting).
+
 ### Manual (any OS)
 ```bash
 pip install -r requirements.txt

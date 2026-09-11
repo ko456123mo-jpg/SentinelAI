@@ -10,7 +10,7 @@
 | المتطلب | الحد الأدنى | ملاحظات |
 |---|---|---|
 | نظام التشغيل | Kali Linux (أي إصدار حديث: 2023.1 فما فوق) | يعمل أيضًا على أي توزيعة Debian/Ubuntu |
-| Python | **3.10 – 3.13** | TensorFlow لا يدعم 3.14 بعد. كالي 2024.3+ يأتي بـ 3.12/3.13 ✅ |
+| Python | **3.10 – 3.13** | ⚠️ كالي **2025.2+** يأتي بـ Python **3.14** — يجب استخدام miniforge بـ 3.12 (انظر «حل المشاكل» فقرة 3) |
 | الذاكرة RAM | 2 جيجابايت (يفضل 4) | التشغيل العادي خفيف؛ التدريب الكامل يحتاج أكثر |
 | مساحة القرص | **~2 جيجابايت** حرة | للتثبيت + تحميل البيانات (عند إعادة التدريب) |
 | الإنترنت | مطلوب **مرة واحدة فقط** | لتثبيت المكتبات (وإن أعدت التدريب فتحتاج تحميل البيانات) |
@@ -58,7 +58,7 @@ python3 --version
 ```
 
 يجب أن ترى `Python 3.10` حتى `3.13`. لو ظهرت `3.14` أو أعلى، انتقل إلى قسم
-«حل المشاكل» (الفقرة 1).
+«حل المشاكل» (الفقرة 3).
 
 ### الخطوة 3 — نسخ المشروع من GitHub
 
@@ -166,16 +166,27 @@ pip install -r requirements.txt
 sudo apt install -y python3-venv python3-pip
 ```
 
-### 3) نسخة Python هي 3.14 أو أعلى (غير مدعومة من TensorFlow)
-**الحل:** ثبّت miniforge وأنشئ بيئة 3.12/3.13:
+### 3) نسخة Python هي 3.14 أو أعلى (غير مدعومة من TensorFlow) ⚠️ الأكثر شيوعًا
+**السبب:** كالي 2025.2 وما بعده يأتي بـ Python 3.14 افتراضيًا، وTensorFlow لا يدعمها بعد (حتى 3.13 فقط). عند التثبيت ستظهر رسالة:
+`ERROR: Ignored the following versions that require a different Python version`
+**الحل:** ثبّت miniforge وأنشئ بيئة بـ Python 3.12 (لا يحتاج sudo):
 ```bash
-# حمّل miniforge ثم:
-conda create -n sentinel python=3.12 -y
-conda activate sentinel
+# احذف أي بيئة قديمة خاطئة
+rm -rf .venv venv
+
+# ثبّت miniforge (مرة واحدة)
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh -b
+
+# أنشئ بيئة sentinel بـ Python 3.12
+~/miniforge/bin/conda create -n sentinel python=3.12 -y
+
+# فعّلها وثبّت المتطلبات
+source ~/miniforge/bin/activate sentinel
 pip install -r requirements.txt
 python -m src.webapp
 ```
-> ملف `run_kali.sh` يكتشف بيئة conda باسم `sentinel` تلقائيًا إن وجدت.
+> ملف `run_kali.sh` يكتشف بيئة conda باسم `sentinel` تلقائيًا في كل مرة لاحقة.
 
 ### 4) المنفذ 7860 مشغول بالفعل
 **السبب:** نسخة أخرى من البرنامج تعمل.

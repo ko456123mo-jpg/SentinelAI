@@ -32,6 +32,19 @@ fi
 
 # --- 3) Otherwise create a local .venv (avoids Kali's system-Python restrictions) ---
 if [ -z "$PY" ]; then
+    # TensorFlow has NO Python 3.14 wheels yet -> stop early with a clear fix
+    # instead of creating a 3.14 venv that cannot install requirements.
+    if ! python3 -c "import sys; sys.exit(0 if (3,10) <= sys.version_info[:2] <= (3,13) else 1)" 2>/dev/null; then
+        echo "[!] System Python is $(python3 --version 2>&1) - too new."
+        echo "    TensorFlow supports Python 3.10 - 3.13 only."
+        echo ""
+        echo "    FIX (Kali 2025.x ships Python 3.14): install miniforge and a 3.12 env:"
+        echo "        wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"
+        echo "        bash Miniforge3-Linux-x86_64.sh -b"
+        echo "        ~/miniforge/bin/conda create -n sentinel python=3.12 -y"
+        echo "    then run this script again (it auto-detects the 'sentinel' env)."
+        exit 1
+    fi
     echo "[*] Creating local Python environment (.venv) - first run only..."
     if ! python3 -m venv .venv; then
         echo "[!] Could not create .venv"
