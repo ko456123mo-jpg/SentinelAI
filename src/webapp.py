@@ -981,8 +981,8 @@ function loadReport(){fetch("/api/report").then(r=>r.json()).then(s=>{
  '" style="margin:4px;display:inline-block">'+k+': '+v+'</span>').join("")+
  '</div><h4>Recommendations</h4><ul style="margin:10px 0 0 20px;line-height:1.9">'+
  s.recommendations.map(r=>'<li>'+r+'</li>').join("")+'</ul><h4>Incidents</h4>'+
- incTable(l)+'<p class="hint">Full file: results/reports/security_report.md</p>'+
- ';});});}
+ incTable(l)+'<p class="hint">Full file: results/reports/security_report.md</p>';
+ });});}
 
 /* ---------- gallery ---------- */
 function loadFigs(cat){
