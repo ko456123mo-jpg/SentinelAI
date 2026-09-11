@@ -291,6 +291,8 @@ td .ok{color:#4ade80;font-weight:800}
 background:#fff}
 .figrow .cap{color:var(--dim);font-size:.72rem;margin-top:5px}
 .hint{color:var(--dim);font-size:.78rem;margin-top:6px;line-height:1.7}
+.err{color:#fca5a5;background:#7f1d1d;border:1px solid #f87171;border-radius:10px;
+ padding:10px 12px;font-size:.82rem;margin-top:8px}
 .check{color:#4ade80;font-weight:900}
 .flowsteps{display:flex;flex-wrap:wrap;gap:8px}
 .step{background:var(--panel2);border:1px solid var(--line);border-radius:
@@ -751,7 +753,10 @@ function incTable(list){if(!list.length)return"<i>no incidents yet</i>";
  i.response_action+'</b></td></tr>').join("")+'</table>';}
 
 /* ---------- dashboard ---------- */
-function loadStats(){fetch("/api/stats").then(r=>r.json()).then(s=>{
+function dashError(el,msg){
+ $(el).innerHTML='<div class="err">⚠️ '+msg+'</div>';}
+function loadStats(){fetch("/api/stats").then(r=>{if(!r.ok)throw 0;return r.json()})
+ .then(s=>{
  const c=[["Random Forest accuracy",s.rf_accuracy,"p"],["5-fold CV (RF)",
  s.rf_cv,"p"],["IsolationForest precision",s.iso_precision,"p"],
  ["LSTM F1 (real SMS)",s.lstm_f1,"p"],["CNN accuracy",s.cnn_accuracy,"p"],
@@ -759,9 +764,13 @@ function loadStats(){fetch("/api/stats").then(r=>r.json()).then(s=>{
  "i"],["Blacklist domains",s.blacklist_size,"i"]];
  $("cards").innerHTML=c.map(([k,v,t])=>'<div class="card"><div class="k">'+
  k+'</div><div class="v">'+(v==null?"-":(t==="p"?P(v):(t==="r"?v.toFixed(2):
- v.toLocaleString())))+'</div></div>').join("");});
- fetch("/api/incidents").then(r=>r.json()).then(l=>$("incdash").innerHTML=
- incTable(l));}
+ v.toLocaleString())))+'</div></div>').join("");})
+ .catch(()=>dashError("cards","server not reachable — is the terminal still "+
+   "running <b>python -m src.webapp</b>? Refresh after it prints "+
+   "“Running on http://127.0.0.1:7860”."));
+ fetch("/api/incidents").then(r=>{if(!r.ok)throw 0;return r.json()})
+ .then(l=>$("incdash").innerHTML=incTable(l))
+ .catch(()=>dashError("incdash","could not load incidents (server offline?)"));}
 
 /* ---------- datasets ---------- */
 function loadData(){fetch("/api/dataset_doc").then(r=>r.json()).then(d=>{
@@ -1018,8 +1027,36 @@ fetch("/api/samples").then(r=>r.json()).then(fs=>{
 
 if __name__ == "__main__":
     config.ensure_dirs()
-    get_agent()                       # load all trained artifacts once
-    # Convenience: open the console in the default browser shortly after start.
+    try:
+        get_agent()                   # load all trained artifacts once
+    except Exception as exc:          # pragma: no cover
+        import traceback
+        print("\n" + "=" * 62)
+        print("  [FATAL] Could not load the trained models.")
+        print("  This usually means one of the model files in models/ is")
+        print("  missing or was saved with a different TensorFlow version.")
+        print("  Fix: re-train once with ->  python -m src.main")
+        print("=" * 62)
+        traceback.print_exc()
+        raise SystemExit(1)
+    # Open the browser only AFTER the server is actually listening,
+    # so the tab never lands on "Problem loading page".
     import threading, webbrowser
-    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:7860")).start()
-    app.run(host="0.0.0.0", port=7860, debug=False, threaded=True)
+    def _open_when_ready():
+        import socket, time
+        for _ in range(120):
+            try:
+                with socket.create_connection(("127.0.0.1", 7860), timeout=1):
+                    webbrowser.open("http://localhost:7860")
+                    return
+            except OSError:
+                time.sleep(0.5)
+        print("[!] Server slow to start - open http://localhost:7860 manually")
+    threading.Thread(target=_open_when_ready, daemon=True).start()
+    try:
+        app.run(host="0.0.0.0", port=7860, debug=False, threaded=True)
+    except OSError as exc:             # pragma: no cover
+        if "Address already in use" in str(exc):
+            print("\n[!] Port 7860 is already in use - another instance is running.")
+            print("    Fix: sudo fuser -k 7860/tcp   (then run this again)")
+        raise
