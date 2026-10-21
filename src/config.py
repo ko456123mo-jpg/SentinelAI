@@ -46,12 +46,13 @@ PRED_DIR = os.path.join(RESULTS_DIR, "predictions")
 REPORT_DIR = os.path.join(RESULTS_DIR, "reports")
 
 DOCS_DIR = os.path.join(ROOT, "docs")
+ACADEMIC_DIR = os.path.join(DOCS_DIR, "academic")
 
 
 def ensure_dirs():
     """Create every directory required by the project structure."""
     for d in (RAW_DIR, PROC_DIR, TEST_DIR, MODEL_DIR,
-              FIG_DIR, PRED_DIR, REPORT_DIR, DOCS_DIR):
+              FIG_DIR, PRED_DIR, REPORT_DIR, DOCS_DIR, ACADEMIC_DIR):
         os.makedirs(d, exist_ok=True)
 
 

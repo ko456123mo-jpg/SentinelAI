@@ -1,0 +1,23 @@
+# =====================================================================
+#  معالجة الملفات الثنائية / Binary handling
+# =====================================================================
+
+# النماذج والمستندات: ثنائية، لا تُعرض كفروق نصية
+*.joblib   binary
+*.keras    binary
+*.h5       binary
+*.pkl      binary
+*.docx     binary
+*.pptx     binary
+*.xlsx     binary
+*.png      binary
+*.jpg      binary
+
+# توحيد نهايات الأسطر
+* text=auto eol=lf
+*.bat  text eol=crlf
+*.ps1  text eol=crlf
+
+# ملفات لا تُحسب في إحصاءات اللغة
+*.md       linguist-documentation
+docs/**    linguist-documentation

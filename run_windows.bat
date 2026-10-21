@@ -1,7 +1,7 @@
 @echo off
 rem ============================================================
 rem  SentinelAI - AI Cybersecurity Assistant
-rem  Developer: Mohammed Moneer Al-absi (2023050086)
+rem  Developer: Mohammed Moneer
 rem  One-click launcher for Windows
 rem ============================================================
 cd /d "%~dp0"

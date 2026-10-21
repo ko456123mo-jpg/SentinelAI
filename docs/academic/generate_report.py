@@ -1,18 +1,18 @@
 """
 SentinelAI - Documentation report generator
 ===========================================
-Builds docs/SentinelAI_Report.docx with the 13 required sections,
+Builds docs/academic/SentinelAI_Report.docx with the 13 required sections,
 pulling REAL metrics from results/reports/*.json and embedding the
 figures produced by the pipeline, so the document always matches the run.
 
-Run AFTER the pipeline:   python docs/generate_report.py
+Run AFTER the pipeline:   python docs/academic/generate_report.py
 """
 
 import json
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -543,7 +543,7 @@ def build():
     for i, ref in enumerate(refs, 1):
         doc.add_paragraph(f"[{i}] {ref}")
 
-    out = os.path.join(config.DOCS_DIR, "SentinelAI_Report.docx")
+    out = os.path.join(config.DOCS_DIR, "academic", "SentinelAI_Report.docx")
     doc.save(out)
     print("saved:", out)
     return out

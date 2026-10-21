@@ -365,7 +365,7 @@ height:auto;position:static;display:flex;flex-wrap:wrap;gap:4px}
 <div class="tab" id="t-project">
  <header class="top"><span class="big-emoji">🎯</span>
   <h2>Project Definition &amp; Requirements Coverage</h2>
-  <span class="sub">AI Final Project — Level 3 (Expert)</span></header>
+  <span class="sub">Unified Threat Detection &amp; Response Platform</span></header>
  <div class="panel"><h3>Problem definition (Stage 1)</h3>
   <p class="hint">SOC teams face thousands of heterogeneous events per day
   (network flows, messages, files). Signature tools only catch known threats
