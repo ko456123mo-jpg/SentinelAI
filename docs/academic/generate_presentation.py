@@ -1,15 +1,15 @@
 """
 SentinelAI - Presentation generator (PowerPoint)
 ================================================
-Builds docs/SentinelAI_Presentation.pptx from the real run metrics.
-Run AFTER the pipeline:   python docs/generate_presentation.py
+Builds docs/academic/SentinelAI_Presentation.pptx from the real run metrics.
+Run AFTER the pipeline:   python docs/academic/generate_presentation.py
 """
 
 import json
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from pptx import Presentation
 from pptx.dml.color import RGBColor
@@ -260,7 +260,7 @@ def build():
         "The AI output directly supports response decisions",
         "Thank you - questions?"])
 
-    out = os.path.join(config.DOCS_DIR, "SentinelAI_Presentation.pptx")
+    out = os.path.join(config.DOCS_DIR, "academic", "SentinelAI_Presentation.pptx")
     prs.save(out)
     print("saved:", out)
     return out

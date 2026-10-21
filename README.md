@@ -4,20 +4,36 @@
 detects attacks in network traffic, spam/phishing in messages and malware in
 files, then *decides* the response automatically.
 
-**Project level:** Level 3 — Expert (all mandatory components + Deep Learning +
-NLP + Computer Vision + Reinforcement Learning + AI Agent).
+<p align="center">
+  <a href="../../actions/workflows/tests.yml"><img src="../../actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+  <img src="https://img.shields.io/badge/Python-3.10--3.13-blue?logo=python&logoColor=white" alt="Python 3.10-3.13"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License"/>
+  <img src="https://img.shields.io/badge/scikit--learn-ML-orange?logo=scikitlearn&logoColor=white" alt="scikit-learn"/>
+  <img src="https://img.shields.io/badge/TensorFlow-Deep%20Learning-FF6F00?logo=tensorflow&logoColor=white" alt="TensorFlow"/>
+  <img src="https://img.shields.io/badge/Domain-SOC%20%2F%20Threat%20Detection-8B5CF6" alt="Threat Detection"/>
+</p>
+
+**What it does in one line:** routes each incoming event (network flow · message ·
+file) to the right engine, scores the risk, chooses a response policy, and writes
+an incident report — with every number traceable to a real trained model.
+
+**Scope:** supervised + unsupervised + deep learning + NLP + computer vision +
+reinforcement learning + an orchestrating agent, trained on real public corpora
+(CICIDS2017 · Malimg · UCI SMS Spam).
 
 ---
 
-## 👨‍💻 Developer
+## 👨‍💻 Author
 
-| | |
-|---|---|
-| **Name** | **Mohammed Moneer Al-absi** |
-| **Student ID** | 2023050086 |
-| **Section** | Cybersecurity (CS) |
-| **Supervisor** | Eng. Sondos Saif |
-| **Project** | AI Final Project — 2026 |
+**Mohammed Moneer** — مهندس أمن سيبراني
+
+- 🐙 [@ko456123mo-jpg](https://github.com/ko456123mo-jpg)
+- 📧 [moh123mon456@gmail.com](mailto:moh123mon456@gmail.com)
+
+> البُعد الأكاديمي (المشرف، متطلبات المقرر، المواد المرجعية) موثّق في
+> [`docs/academic/`](docs/academic/) منفصلاً عن وصف الأداة.
+
+**متاح للعمل الحر:** بناء أنظمة كشف وتحليل بالذكاء الاصطناعي · أتمتة أمنية · أدوات داخلية مخصّصة.
 
 ---
 
@@ -204,8 +220,8 @@ event (flow / message / file image)
 | 3.2 AI Agent | ✅ | SentinelAgent routing + risk fusion + RL decision + report |
 | 4. Project structure | ✅ | `data/ src/ models/ results/ tests/ requirements.txt README.md` |
 | 5. Stages 1–11 | ✅ | one module per stage + `main.py` orchestrator |
-| 6. Project level | ✅ | **Level 3 — Expert** (everything + RL + Agent) |
-| 8. Documentation structure (13 sections) | ✅ | `docs/SentinelAI_Report.docx` |
+| 6. Orchestration | ✅ | AI agent routes events, applies the RL policy, writes the report |
+| 8. Documentation structure (13 sections) | ✅ | `docs/academic/SentinelAI_Report.docx` |
 | 9. Grading rubric (100) | ✅ | every component has evidence (see §9 below) |
 
 ## 9. Grading-rubric self-assessment
@@ -219,14 +235,14 @@ event (flow / message / file image)
 | Advanced AI technique | 10 | DL + NLP + CV + RL + Agent (all five) |
 | Evaluation & visualization | 10 | full metrics + 37 figures |
 | Documentation | 10 | 13-section report + README + Arabic guides |
-| Presentation & discussion | 10 | 17-slide deck + live console + `docs/Discussion_Q&A_AR.md` |
+| Presentation & discussion | 10 | 17-slide deck + live console + `docs/academic/Discussion_Q&A_AR.md` |
 
 ## 10. Results
 
 All metrics are written to `results/reports/*.json` after each run and
 summarized in `results/reports/pipeline_summary.json`; the automated agent
 report is `results/reports/security_report.md`. Highlights are listed in
-`docs/` (report & presentation) — see `docs/SentinelAI_Report.docx`.
+`docs/academic/` (report, presentation, study guide) — see `docs/academic/SentinelAI_Report.docx`.
 
 ## 11. References
 
@@ -241,3 +257,15 @@ report is `results/reports/security_report.md`. Highlights are listed in
 6. Sutton, R. & Barto, A. — *Reinforcement Learning: An Introduction* (2018),
    Q-learning chapter.
 7. Liu, F. T. et al. (2008) — *Isolation Forest*, ICDM.
+
+---
+
+## 12. License & policies
+
+- **MIT License** — see [`LICENSE`](LICENSE). الاستخدام التجاري مسموح.
+- [`SECURITY.md`](SECURITY.md) — الإبلاغ عن ثغرة (لا تفتح Issue عاماً).
+- [`USAGE_POLICY.md`](USAGE_POLICY.md) — الاستخدام المسموح/الممنوع وسياسة التعامل مع البيانات.
+
+> **حجم المستودع:** النماذج المدرَّبة (16 ملفاً · ~30 MB) ومجموعات البيانات المعالجة
+> مُرفقة عمداً داخل المستودع، حتى تعمل الواجهة فوراً بعد الاستنساخ بلا إعادة تدريب.
+> ملفات `.docx`/`.pptx` الخاصة بالتسليم الأكاديمي في [`docs/academic/`](docs/academic/).
