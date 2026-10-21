@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
 #  SentinelAI - AI Cybersecurity Assistant
-#  Developer: Mohammed Moneer Al-absi (2023050086)
+#  Developer: Mohammed Moneer
 #  One-command launcher for Linux / Kali
 #  Usage:   bash run_kali.sh
 # ============================================================
